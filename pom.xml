@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -20,6 +21,7 @@
 
 	<properties>
 		<bootique-version>0.12</bootique-version>
+		<bootique-jersey-version>0.11</bootique-jersey-version>
 		<jersey-version>2.21</jersey-version>
 	</properties>
 
@@ -37,26 +39,24 @@
 				<version>${bootique-version}</version>
 			</dependency>
 			<dependency>
-			    <groupId>org.glassfish.jersey.core</groupId>
-			    <artifactId>jersey-client</artifactId>
-			    <version>${jersey-version}</version>
+				<groupId>com.nhl.bootique.jersey</groupId>
+				<artifactId>bootique-jersey</artifactId>
+				<version>${bootique-jersey-version}</version>
 			</dependency>
 			<dependency>
-			    <groupId>org.glassfish.jersey.connectors</groupId>
-			    <artifactId>jersey-grizzly-connector</artifactId>
-			    <version>${jersey-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.glassfish.jersey.test-framework</groupId>
-				<artifactId>jersey-test-framework-core</artifactId>
+				<groupId>org.glassfish.jersey.core</groupId>
+				<artifactId>jersey-client</artifactId>
 				<version>${jersey-version}</version>
-				<!-- TODO: exclusions for tests -->
 			</dependency>
 			<dependency>
-				<groupId>org.glassfish.jersey.test-framework.providers</groupId>
-				<artifactId>jersey-test-framework-provider-inmemory</artifactId>
+				<groupId>org.glassfish.jersey.connectors</groupId>
+				<artifactId>jersey-grizzly-connector</artifactId>
 				<version>${jersey-version}</version>
-				<!-- TODO: exclusions for tests -->
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-simple</artifactId>
+				<version>1.7.13</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -74,13 +74,13 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.glassfish.jersey.test-framework</groupId>
-			<artifactId>jersey-test-framework-core</artifactId>
+			<groupId>com.nhl.bootique.jersey</groupId>
+			<artifactId>bootique-jersey</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.glassfish.jersey.test-framework.providers</groupId>
-			<artifactId>jersey-test-framework-provider-inmemory</artifactId>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
 			<scope>test</scope>
 		</dependency>
 
@@ -91,14 +91,14 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-		    <groupId>org.glassfish.jersey.core</groupId>
-		    <artifactId>jersey-client</artifactId>
-		    <scope>compile</scope>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-client</artifactId>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
-		    <groupId>org.glassfish.jersey.connectors</groupId>
-		    <artifactId>jersey-grizzly-connector</artifactId>
-		    <scope>compile</scope>
+			<groupId>org.glassfish.jersey.connectors</groupId>
+			<artifactId>jersey-grizzly-connector</artifactId>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 
