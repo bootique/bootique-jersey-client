@@ -10,7 +10,7 @@
 
 	<groupId>com.nhl.bootique.jersey.client</groupId>
 	<artifactId>bootique-jersey-client</artifactId>
-	<version>0.1</version>
+	<version>0.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>An HTTP client integrated with Bootique, built on top of Jersey.</name>
@@ -27,7 +27,7 @@
 	<scm>
 		<developerConnection>scm:git:ssh://git@github.com/nhl/bootique-jersey-client</developerConnection>
 		<url>https://github.com/nhl/bootique-jersey-client</url>
-		<tag>bootique-jersey-client-0.1</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<dependencyManagement>
