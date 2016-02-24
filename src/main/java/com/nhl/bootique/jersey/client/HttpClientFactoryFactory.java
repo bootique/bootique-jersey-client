@@ -12,11 +12,11 @@ import com.nhl.bootique.jersey.client.auth.AuthenticatorFactory;
 
 public class HttpClientFactoryFactory {
 
-	private boolean followRedirects;
-	private int readTimeoutMs;
-	private int connectTimeoutMs;
-	private int asyncThreadPoolSize;
-	private Map<String, AuthenticatorFactory> auth;
+	boolean followRedirects;
+	int readTimeoutMs;
+	int connectTimeoutMs;
+	int asyncThreadPoolSize;
+	Map<String, AuthenticatorFactory> auth;
 
 	/**
 	 * @since 0.2
