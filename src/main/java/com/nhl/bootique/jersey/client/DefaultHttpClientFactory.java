@@ -31,7 +31,7 @@ public class DefaultHttpClientFactory implements HttpClientFactory {
 
 		ClientRequestFilter filter = authFilters.get(authName);
 		if (filter == null) {
-			throw new IllegalArgumentException("No authentication for name: " + authName);
+			throw new IllegalArgumentException("No authenticator configured for name: " + authName);
 		}
 
 		return newClient().register(filter);

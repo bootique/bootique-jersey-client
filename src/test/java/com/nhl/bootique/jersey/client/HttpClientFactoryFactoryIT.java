@@ -4,11 +4,14 @@ import static org.junit.Assert.assertEquals;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.Produces;
@@ -21,6 +24,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.nhl.bootique.jersey.client.auth.AuthenticatorFactory;
+import com.nhl.bootique.jersey.client.auth.BasicAuthenticatorFactory;
 import com.nhl.bootique.jersey.client.unit.ServerApp;
 
 public class HttpClientFactoryFactoryIT {
@@ -111,6 +116,25 @@ public class HttpClientFactoryFactoryIT {
 		client.target("http://127.0.0.1:8080/").path("/slowget").request().get();
 	}
 
+	@Test
+	public void testCreateClientFactory_BasicAuth() {
+
+		HttpClientFactoryFactory factoryFactory = new HttpClientFactoryFactory();
+
+		BasicAuthenticatorFactory authenticator = new BasicAuthenticatorFactory();
+		authenticator.setPassword("p1");
+		authenticator.setUsername("u1");
+
+		Map<String, AuthenticatorFactory> auth = new HashMap<>();
+		auth.put("a1", authenticator);
+		factoryFactory.setAuth(auth);
+		Client client = factoryFactory.createClientFactory().newAuthenticatedClient("a1");
+
+		Response r = client.target("http://127.0.0.1:8080/").path("/basicget").request().get();
+		assertEquals(Status.OK.getStatusCode(), r.getStatus());
+		assertEquals("got_basic_BASIC dTE6cDE=", r.readEntity(String.class));
+	}
+
 	@Path("/")
 	@Produces(MediaType.TEXT_PLAIN)
 	public static class Resource {
@@ -132,6 +156,12 @@ public class HttpClientFactoryFactoryIT {
 		public String slowGet() throws InterruptedException {
 			Thread.sleep(1000);
 			return "slowly_got";
+		}
+
+		@GET
+		@Path("basicget")
+		public String basicGet(@HeaderParam("Authorization") String auth) {
+			return "got_basic_" + auth;
 		}
 	}
 }
