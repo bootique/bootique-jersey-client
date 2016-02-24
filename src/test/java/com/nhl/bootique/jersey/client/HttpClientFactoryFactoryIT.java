@@ -1,6 +1,7 @@
 package com.nhl.bootique.jersey.client;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -23,12 +24,16 @@ import javax.ws.rs.core.Response.Status;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.nhl.bootique.jersey.client.auth.AuthenticatorFactory;
 import com.nhl.bootique.jersey.client.auth.BasicAuthenticatorFactory;
 import com.nhl.bootique.jersey.client.unit.ServerApp;
 
 public class HttpClientFactoryFactoryIT {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(HttpClientFactoryFactoryIT.class);
 
 	private static ExecutorService executor;
 
@@ -38,8 +43,32 @@ public class HttpClientFactoryFactoryIT {
 		executor.submit(() -> {
 			return new ServerApp(Resource.class).run("--server");
 		});
-		// wait for Jetty to start ...
-		Thread.sleep(2000);
+
+		// check for Jetty to start
+		HttpClientFactoryFactory factoryFactory = new HttpClientFactoryFactory();
+		Client client = factoryFactory.createClientFactory().newClient();
+		ProcessingException lastException = null;
+
+		for (int i = 0; i < 10; i++) {
+
+			Thread.sleep(500);
+
+			try {
+				client.target("http://127.0.0.1:8080/").request().get().close();
+				lastException = null;
+				break;
+			} catch (ProcessingException e) {
+				lastException = e;
+				LOGGER.info("Jetty is not available yet...");
+			}
+		}
+
+		if (lastException != null) {
+			LOGGER.info("Can't start Jetty. Last connect attempt ended in error", lastException);
+			fail("Can't start Jetty");
+		} else {
+			LOGGER.info("Jetty started... will start running tests");
+		}
 	}
 
 	@AfterClass
