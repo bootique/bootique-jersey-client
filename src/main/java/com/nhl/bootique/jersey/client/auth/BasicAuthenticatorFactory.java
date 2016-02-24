@@ -9,9 +9,12 @@ import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.xml.bind.DatatypeConverter;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
 /**
  * @since 0.2
  */
+@JsonTypeName("basic")
 public class BasicAuthenticatorFactory implements AuthenticatorFactory {
 
 	private String username;
@@ -54,7 +57,7 @@ public class BasicAuthenticatorFactory implements AuthenticatorFactory {
 			headers.add("Authorization", basicAuth);
 		}
 
-		private String createBasicAuth(String username, String password) {
+		static String createBasicAuth(String username, String password) {
 			String token = username + ":" + password;
 			try {
 				return "BASIC " + DatatypeConverter.printBase64Binary(token.getBytes("UTF-8"));
