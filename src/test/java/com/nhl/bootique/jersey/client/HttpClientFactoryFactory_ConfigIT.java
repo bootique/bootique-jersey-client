@@ -14,26 +14,23 @@ import java.util.function.Function;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhl.bootique.config.ConfigurationSource;
 import com.nhl.bootique.config.YamlConfigurationFactory;
 import com.nhl.bootique.env.Environment;
+import com.nhl.bootique.jackson.DefaultJacksonService;
 import com.nhl.bootique.jackson.JacksonService;
 import com.nhl.bootique.jersey.client.auth.AuthenticatorFactory;
 import com.nhl.bootique.jersey.client.auth.BasicAuthenticatorFactory;
+import com.nhl.bootique.log.DefaultBootLogger;
 
 public class HttpClientFactoryFactory_ConfigIT {
 
 	private ConfigurationSource mockConfigSource;
-	private JacksonService mockJacksonService;
 	private Environment mockEnvironment;
 
 	@Before
 	public void before() {
 		mockConfigSource = mock(ConfigurationSource.class);
-		mockJacksonService = mock(JacksonService.class);
-		when(mockJacksonService.newObjectMapper()).thenReturn(new ObjectMapper());
-
 		mockEnvironment = mock(Environment.class);
 	}
 
@@ -47,7 +44,10 @@ public class HttpClientFactoryFactory_ConfigIT {
 			return processor.apply(in);
 		});
 
-		return new YamlConfigurationFactory(mockConfigSource, mockEnvironment, mockJacksonService);
+		// not using a mock; making sure all Jackson extensions are loaded
+		JacksonService jacksonService = new DefaultJacksonService(new DefaultBootLogger(true));
+
+		return new YamlConfigurationFactory(mockConfigSource, mockEnvironment, jacksonService);
 	}
 
 	@Test

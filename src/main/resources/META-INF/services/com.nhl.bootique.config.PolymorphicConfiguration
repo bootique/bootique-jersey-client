@@ -1,0 +1,2 @@
+com.nhl.bootique.jersey.client.auth.AuthenticatorFactory
+com.nhl.bootique.jersey.client.auth.BasicAuthenticatorFactory
