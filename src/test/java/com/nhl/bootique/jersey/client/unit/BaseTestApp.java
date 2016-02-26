@@ -24,7 +24,7 @@ public abstract class BaseTestApp {
 		Bootique bootique = Bootique.app(args).bootLogger(createBootLogger());
 		configure(bootique);
 
-		BQRuntime runtime = bootique.runtime();
+		BQRuntime runtime = bootique.createRuntime();
 		try {
 			return runtime.getRunner().run();
 		} finally {
