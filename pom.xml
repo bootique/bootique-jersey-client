@@ -19,8 +19,7 @@
 	</description>
 
 	<properties>
-		<bootique-version>0.13-SNAPSHOT</bootique-version>
-		<bootique-jersey-version>0.11</bootique-jersey-version>
+		<bootique-version>0.13</bootique-version>
 		<jersey-version>2.21</jersey-version>
 	</properties>
 
@@ -40,7 +39,7 @@
 			<dependency>
 				<groupId>com.nhl.bootique.jersey</groupId>
 				<artifactId>bootique-jersey</artifactId>
-				<version>${bootique-jersey-version}</version>
+				<version>0.11</version>
 			</dependency>
 			<dependency>
 				<groupId>org.glassfish.jersey.core</groupId>
