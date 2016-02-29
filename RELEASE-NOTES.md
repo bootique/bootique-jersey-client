@@ -1,6 +1,7 @@
 ## 0.3
 
 * #5 Support for client-side Feature contributions
+* #6 Support injection into services that are registered via features
 * #7 Upgrade to Bootique 0.14
 
 ## 0.2:

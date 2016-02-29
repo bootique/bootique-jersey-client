@@ -1,6 +1,7 @@
 package com.nhl.bootique.jersey.client;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -23,9 +24,11 @@ import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.jetty.server.Server;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.nhl.bootique.BQRuntime;
 import com.nhl.bootique.Bootique;
@@ -56,13 +59,20 @@ public class HttpClientFactoryFactoryIT {
 	public static void after() throws InterruptedException {
 		SERVER_APP.stop();
 	}
+	
+	private Injector mockInjector;
+	
+	@Before
+	public void before() {
+		mockInjector = mock(Injector.class);
+	}
 
 	@Test
 	public void testCreateClientFactory_FollowRedirect() {
 
 		HttpClientFactoryFactory factoryFactory = new HttpClientFactoryFactory();
 		factoryFactory.setFollowRedirects(true);
-		Client client = factoryFactory.createClientFactory(Collections.emptySet()).newClient();
+		Client client = factoryFactory.createClientFactory(mockInjector, Collections.emptySet()).newClient();
 
 		Response r = client.target("http://127.0.0.1:8080/").path("/302").request().get();
 		assertEquals(Status.OK.getStatusCode(), r.getStatus());
@@ -74,7 +84,7 @@ public class HttpClientFactoryFactoryIT {
 
 		HttpClientFactoryFactory factoryFactory = new HttpClientFactoryFactory();
 		factoryFactory.setFollowRedirects(false);
-		Client client = factoryFactory.createClientFactory(Collections.emptySet()).newClient();
+		Client client = factoryFactory.createClientFactory(mockInjector, Collections.emptySet()).newClient();
 
 		Response r = client.target("http://127.0.0.1:8080/").path("/302").request().get();
 		assertEquals(Status.TEMPORARY_REDIRECT.getStatusCode(), r.getStatus());
@@ -85,7 +95,7 @@ public class HttpClientFactoryFactoryIT {
 	public void testCreateClientFactory_DefaultRedirect_NoFollow() {
 
 		HttpClientFactoryFactory factoryFactory = new HttpClientFactoryFactory();
-		Client client = factoryFactory.createClientFactory(Collections.emptySet()).newClient();
+		Client client = factoryFactory.createClientFactory(mockInjector, Collections.emptySet()).newClient();
 
 		Response r = client.target("http://127.0.0.1:8080/").path("/302").request().get();
 		assertEquals(Status.TEMPORARY_REDIRECT.getStatusCode(), r.getStatus());
@@ -96,7 +106,7 @@ public class HttpClientFactoryFactoryIT {
 	public void testCreateClientFactory_NoTimeout() {
 
 		HttpClientFactoryFactory factoryFactory = new HttpClientFactoryFactory();
-		Client client = factoryFactory.createClientFactory(Collections.emptySet()).newClient();
+		Client client = factoryFactory.createClientFactory(mockInjector, Collections.emptySet()).newClient();
 
 		Response r = client.target("http://127.0.0.1:8080/").path("/slowget").request().get();
 		assertEquals(Status.OK.getStatusCode(), r.getStatus());
@@ -108,7 +118,7 @@ public class HttpClientFactoryFactoryIT {
 
 		HttpClientFactoryFactory factoryFactory = new HttpClientFactoryFactory();
 		factoryFactory.setReadTimeoutMs(2000);
-		Client client = factoryFactory.createClientFactory(Collections.emptySet()).newClient();
+		Client client = factoryFactory.createClientFactory(mockInjector, Collections.emptySet()).newClient();
 
 		Response r = client.target("http://127.0.0.1:8080/").path("/slowget").request().get();
 		assertEquals(Status.OK.getStatusCode(), r.getStatus());
@@ -120,7 +130,7 @@ public class HttpClientFactoryFactoryIT {
 
 		HttpClientFactoryFactory factoryFactory = new HttpClientFactoryFactory();
 		factoryFactory.setReadTimeoutMs(50);
-		Client client = factoryFactory.createClientFactory(Collections.emptySet()).newClient();
+		Client client = factoryFactory.createClientFactory(mockInjector, Collections.emptySet()).newClient();
 
 		client.target("http://127.0.0.1:8080/").path("/slowget").request().get();
 	}
@@ -137,7 +147,7 @@ public class HttpClientFactoryFactoryIT {
 		Map<String, AuthenticatorFactory> auth = new HashMap<>();
 		auth.put("a1", authenticator);
 		factoryFactory.setAuth(auth);
-		Client client = factoryFactory.createClientFactory(Collections.emptySet()).newAuthenticatedClient("a1");
+		Client client = factoryFactory.createClientFactory(mockInjector, Collections.emptySet()).newAuthenticatedClient("a1");
 
 		Response r = client.target("http://127.0.0.1:8080/").path("/basicget").request().get();
 		assertEquals(Status.OK.getStatusCode(), r.getStatus());

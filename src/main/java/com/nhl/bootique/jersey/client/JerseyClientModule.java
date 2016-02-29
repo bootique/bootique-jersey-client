@@ -5,6 +5,7 @@ import java.util.Set;
 import javax.ws.rs.core.Feature;
 
 import com.google.inject.Binder;
+import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.multibindings.Multibinder;
@@ -31,7 +32,9 @@ public class JerseyClientModule extends ConfigModule {
 
 	@Provides
 	@Singleton
-	HttpClientFactory createClientFactory(ConfigurationFactory configurationFactory, Set<Feature> features) {
-		return configurationFactory.config(HttpClientFactoryFactory.class, configPrefix).createClientFactory(features);
+	HttpClientFactory createClientFactory(ConfigurationFactory configurationFactory, Injector injector,
+			Set<Feature> features) {
+		return configurationFactory.config(HttpClientFactoryFactory.class, configPrefix).createClientFactory(injector,
+				features);
 	}
 }

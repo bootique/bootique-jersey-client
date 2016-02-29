@@ -10,6 +10,7 @@ import javax.ws.rs.core.Feature;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 
+import com.google.inject.Injector;
 import com.nhl.bootique.jersey.client.auth.AuthenticatorFactory;
 
 public class HttpClientFactoryFactory {
@@ -45,8 +46,13 @@ public class HttpClientFactoryFactory {
 		this.asyncThreadPoolSize = asyncThreadPoolSize;
 	}
 
-	public HttpClientFactory createClientFactory(Set<Feature> features) {
+	public HttpClientFactory createClientFactory(Injector injector, Set<Feature> features) {
 		ClientConfig config = createConfig(features);
+
+		// register Guice Injector as a service in Jersey HK2, and
+		// GuiceBridgeFeature as a
+		ClientGuiceBridgeFeature.register(config, injector);
+
 		return new DefaultHttpClientFactory(config, createAuthFilters());
 	}
 
