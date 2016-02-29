@@ -1,15 +1,14 @@
 package com.nhl.bootique.jersey.client;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -21,63 +20,40 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.eclipse.jetty.server.Server;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import com.google.inject.Module;
+import com.nhl.bootique.BQRuntime;
+import com.nhl.bootique.Bootique;
+import com.nhl.bootique.jersey.JerseyModule;
 import com.nhl.bootique.jersey.client.auth.AuthenticatorFactory;
 import com.nhl.bootique.jersey.client.auth.BasicAuthenticatorFactory;
-import com.nhl.bootique.jersey.client.unit.ServerApp;
+import com.nhl.bootique.jetty.JettyModule;
+import com.nhl.bootique.test.BQDaemonTestRuntime;
 
 public class HttpClientFactoryFactoryIT {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(HttpClientFactoryFactoryIT.class);
-
-	private static ExecutorService executor;
+	private static BQDaemonTestRuntime APP;
 
 	@BeforeClass
 	public static void beforeClass() throws InterruptedException {
-		executor = Executors.newSingleThreadExecutor();
-		executor.submit(() -> {
-			return new ServerApp(Resource.class).run("--server");
-		});
 
-		// TODO: switch to BQDaemonTestRuntime (that was originally inspired by
-		// this code)
+		Consumer<Bootique> configurator = b -> {
+			Module jersey = JerseyModule.builder().resource(Resource.class).build();
+			b.modules(JettyModule.class).module(jersey);
+		};
+		Function<BQRuntime, Boolean> startupCheck = r -> r.getInstance(Server.class).isStarted();
 
-		// check for Jetty to start
-		HttpClientFactoryFactory factoryFactory = new HttpClientFactoryFactory();
-		Client client = factoryFactory.createClientFactory().newClient();
-		ProcessingException lastException = null;
-
-		for (int i = 0; i < 10; i++) {
-
-			Thread.sleep(500);
-
-			try {
-				client.target("http://127.0.0.1:8080/").request().get().close();
-				lastException = null;
-				break;
-			} catch (ProcessingException e) {
-				lastException = e;
-				LOGGER.info("Jetty is not available yet...");
-			}
-		}
-
-		if (lastException != null) {
-			LOGGER.info("Can't start Jetty. Last connect attempt ended in error", lastException);
-			fail("Can't start Jetty");
-		} else {
-			LOGGER.info("Jetty started... will start running tests");
-		}
+		APP = new BQDaemonTestRuntime(configurator, startupCheck);
+		APP.start(5, TimeUnit.SECONDS, "--server");
 	}
 
 	@AfterClass
 	public static void after() throws InterruptedException {
-		executor.shutdownNow();
-		executor.awaitTermination(3, TimeUnit.SECONDS);
+		APP.stop();
 	}
 
 	@Test
