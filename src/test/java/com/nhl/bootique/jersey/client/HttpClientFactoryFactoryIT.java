@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -36,7 +37,7 @@ import com.nhl.bootique.test.BQDaemonTestRuntime;
 
 public class HttpClientFactoryFactoryIT {
 
-	private static BQDaemonTestRuntime APP;
+	private static BQDaemonTestRuntime SERVER_APP;
 
 	@BeforeClass
 	public static void beforeClass() throws InterruptedException {
@@ -47,13 +48,13 @@ public class HttpClientFactoryFactoryIT {
 		};
 		Function<BQRuntime, Boolean> startupCheck = r -> r.getInstance(Server.class).isStarted();
 
-		APP = new BQDaemonTestRuntime(configurator, startupCheck);
-		APP.start(5, TimeUnit.SECONDS, "--server");
+		SERVER_APP = new BQDaemonTestRuntime(configurator, startupCheck);
+		SERVER_APP.start(5, TimeUnit.SECONDS, "--server");
 	}
 
 	@AfterClass
 	public static void after() throws InterruptedException {
-		APP.stop();
+		SERVER_APP.stop();
 	}
 
 	@Test
@@ -61,7 +62,7 @@ public class HttpClientFactoryFactoryIT {
 
 		HttpClientFactoryFactory factoryFactory = new HttpClientFactoryFactory();
 		factoryFactory.setFollowRedirects(true);
-		Client client = factoryFactory.createClientFactory().newClient();
+		Client client = factoryFactory.createClientFactory(Collections.emptySet()).newClient();
 
 		Response r = client.target("http://127.0.0.1:8080/").path("/302").request().get();
 		assertEquals(Status.OK.getStatusCode(), r.getStatus());
@@ -73,7 +74,7 @@ public class HttpClientFactoryFactoryIT {
 
 		HttpClientFactoryFactory factoryFactory = new HttpClientFactoryFactory();
 		factoryFactory.setFollowRedirects(false);
-		Client client = factoryFactory.createClientFactory().newClient();
+		Client client = factoryFactory.createClientFactory(Collections.emptySet()).newClient();
 
 		Response r = client.target("http://127.0.0.1:8080/").path("/302").request().get();
 		assertEquals(Status.TEMPORARY_REDIRECT.getStatusCode(), r.getStatus());
@@ -84,7 +85,7 @@ public class HttpClientFactoryFactoryIT {
 	public void testCreateClientFactory_DefaultRedirect_NoFollow() {
 
 		HttpClientFactoryFactory factoryFactory = new HttpClientFactoryFactory();
-		Client client = factoryFactory.createClientFactory().newClient();
+		Client client = factoryFactory.createClientFactory(Collections.emptySet()).newClient();
 
 		Response r = client.target("http://127.0.0.1:8080/").path("/302").request().get();
 		assertEquals(Status.TEMPORARY_REDIRECT.getStatusCode(), r.getStatus());
@@ -95,7 +96,7 @@ public class HttpClientFactoryFactoryIT {
 	public void testCreateClientFactory_NoTimeout() {
 
 		HttpClientFactoryFactory factoryFactory = new HttpClientFactoryFactory();
-		Client client = factoryFactory.createClientFactory().newClient();
+		Client client = factoryFactory.createClientFactory(Collections.emptySet()).newClient();
 
 		Response r = client.target("http://127.0.0.1:8080/").path("/slowget").request().get();
 		assertEquals(Status.OK.getStatusCode(), r.getStatus());
@@ -107,7 +108,7 @@ public class HttpClientFactoryFactoryIT {
 
 		HttpClientFactoryFactory factoryFactory = new HttpClientFactoryFactory();
 		factoryFactory.setReadTimeoutMs(2000);
-		Client client = factoryFactory.createClientFactory().newClient();
+		Client client = factoryFactory.createClientFactory(Collections.emptySet()).newClient();
 
 		Response r = client.target("http://127.0.0.1:8080/").path("/slowget").request().get();
 		assertEquals(Status.OK.getStatusCode(), r.getStatus());
@@ -119,7 +120,7 @@ public class HttpClientFactoryFactoryIT {
 
 		HttpClientFactoryFactory factoryFactory = new HttpClientFactoryFactory();
 		factoryFactory.setReadTimeoutMs(50);
-		Client client = factoryFactory.createClientFactory().newClient();
+		Client client = factoryFactory.createClientFactory(Collections.emptySet()).newClient();
 
 		client.target("http://127.0.0.1:8080/").path("/slowget").request().get();
 	}
@@ -136,7 +137,7 @@ public class HttpClientFactoryFactoryIT {
 		Map<String, AuthenticatorFactory> auth = new HashMap<>();
 		auth.put("a1", authenticator);
 		factoryFactory.setAuth(auth);
-		Client client = factoryFactory.createClientFactory().newAuthenticatedClient("a1");
+		Client client = factoryFactory.createClientFactory(Collections.emptySet()).newAuthenticatedClient("a1");
 
 		Response r = client.target("http://127.0.0.1:8080/").path("/basicget").request().get();
 		assertEquals(Status.OK.getStatusCode(), r.getStatus());

@@ -1,5 +1,6 @@
 ## 0.3
 
+* #5 Support for client-side Feature contributions
 * #7 Upgrade to Bootique 0.14
 
 ## 0.2:

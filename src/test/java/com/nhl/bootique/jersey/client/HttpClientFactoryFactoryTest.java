@@ -3,6 +3,8 @@ package com.nhl.bootique.jersey.client;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.Collections;
+
 import javax.ws.rs.client.Client;
 
 import org.glassfish.jersey.client.ClientProperties;
@@ -19,7 +21,7 @@ public class HttpClientFactoryFactoryTest {
 		factoryFactory.setFollowRedirects(true);
 		factoryFactory.setReadTimeoutMs(203);
 
-		HttpClientFactory factory = factoryFactory.createClientFactory();
+		HttpClientFactory factory = factoryFactory.createClientFactory(Collections.emptySet());
 		assertNotNull(factory);
 
 		Client client = factory.newClient();

@@ -2,8 +2,10 @@ package com.nhl.bootique.jersey.client;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.ws.rs.client.ClientRequestFilter;
+import javax.ws.rs.core.Feature;
 
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
@@ -43,8 +45,9 @@ public class HttpClientFactoryFactory {
 		this.asyncThreadPoolSize = asyncThreadPoolSize;
 	}
 
-	public HttpClientFactory createClientFactory() {
-		return new DefaultHttpClientFactory(createConfig(), createAuthFilters());
+	public HttpClientFactory createClientFactory(Set<Feature> features) {
+		ClientConfig config = createConfig(features);
+		return new DefaultHttpClientFactory(config, createAuthFilters());
 	}
 
 	protected Map<String, ClientRequestFilter> createAuthFilters() {
@@ -57,12 +60,15 @@ public class HttpClientFactoryFactory {
 		return filters;
 	}
 
-	protected ClientConfig createConfig() {
+	protected ClientConfig createConfig(Set<Feature> features) {
 		ClientConfig config = new ClientConfig();
 		config.property(ClientProperties.FOLLOW_REDIRECTS, followRedirects);
 		config.property(ClientProperties.READ_TIMEOUT, readTimeoutMs);
 		config.property(ClientProperties.CONNECT_TIMEOUT, connectTimeoutMs);
 		config.property(ClientProperties.ASYNC_THREADPOOL_SIZE, asyncThreadPoolSize);
+
+		features.forEach(f -> config.register(f));
+
 		return config;
 	}
 }
