@@ -44,6 +44,9 @@ public class HttpClientFactoryFactoryIT {
 			return new ServerApp(Resource.class).run("--server");
 		});
 
+		// TODO: switch to BQDaemonTestRuntime (that was originally inspired by
+		// this code)
+
 		// check for Jetty to start
 		HttpClientFactoryFactory factoryFactory = new HttpClientFactoryFactory();
 		Client client = factoryFactory.createClientFactory().newClient();

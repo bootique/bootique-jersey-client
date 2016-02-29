@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import com.nhl.bootique.BQModuleProvider;
 
-public class JerseyModuleProviderIT {
+public class JerseyClientModuleProviderIT {
 
 	@Test
 	public void testPresentInJar() {
