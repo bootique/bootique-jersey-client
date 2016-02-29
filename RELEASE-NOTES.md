@@ -1,3 +1,7 @@
+## 0.3
+
+* #7 Upgrade to Bootique 0.14
+
 ## 0.2:
 
 * #2 Support for authentication filters
