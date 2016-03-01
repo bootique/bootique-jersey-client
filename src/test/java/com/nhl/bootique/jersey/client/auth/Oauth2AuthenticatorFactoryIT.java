@@ -60,7 +60,7 @@ public class Oauth2AuthenticatorFactoryIT {
 		factory.setTokenUrl("http://127.0.0.1:8080/token");
 
 		ClientConfig config = new ClientConfig();
-		assertEquals("t:client_credentials:BASIC dTpw", factory.getToken(config));
+		assertEquals("t:client_credentials:Basic dTpw", factory.getToken(config));
 	}
 
 	@Test(expected = RuntimeException.class)

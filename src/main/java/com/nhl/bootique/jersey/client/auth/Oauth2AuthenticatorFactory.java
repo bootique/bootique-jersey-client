@@ -8,6 +8,7 @@ import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Configuration;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -66,7 +67,8 @@ public class Oauth2AuthenticatorFactory implements AuthenticatorFactory {
 
 		BasicAuthenticator tokenAuth = new BasicAuthenticator(username, password);
 
-		Entity<String> postEntity = Entity.entity("grant_type=client_credentials", "application/x-www-form-urlencoded");
+		Entity<String> postEntity = Entity.entity("grant_type=client_credentials",
+				MediaType.APPLICATION_FORM_URLENCODED_TYPE);
 		Response tokenResponse = ClientBuilder.newClient(configuration).register(tokenAuth)
 				.register(JacksonFeature.class).target(tokenUrl).request().post(postEntity);
 

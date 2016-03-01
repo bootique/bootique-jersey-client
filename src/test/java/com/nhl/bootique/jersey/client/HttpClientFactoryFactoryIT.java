@@ -151,7 +151,7 @@ public class HttpClientFactoryFactoryIT {
 
 		Response r = client.target("http://127.0.0.1:8080/").path("/basicget").request().get();
 		assertEquals(Status.OK.getStatusCode(), r.getStatus());
-		assertEquals("got_basic_BASIC dTE6cDE=", r.readEntity(String.class));
+		assertEquals("got_basic_Basic dTE6cDE=", r.readEntity(String.class));
 	}
 
 	@Path("/")
