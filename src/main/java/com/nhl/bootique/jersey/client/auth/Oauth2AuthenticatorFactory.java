@@ -15,6 +15,8 @@ import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.annotation.XmlAttribute;
 
 import org.glassfish.jersey.jackson.JacksonFeature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeName;
@@ -25,6 +27,8 @@ import com.nhl.bootique.jersey.client.auth.BasicAuthenticatorFactory.BasicAuthen
  */
 @JsonTypeName("oauth2")
 public class Oauth2AuthenticatorFactory implements AuthenticatorFactory {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(Oauth2AuthenticatorFactory.class);
 
 	private String tokenUrl;
 	private String username;
@@ -65,6 +69,8 @@ public class Oauth2AuthenticatorFactory implements AuthenticatorFactory {
 		Objects.requireNonNull(password);
 		Objects.requireNonNull(tokenUrl);
 
+		LOGGER.info("reading OAuth2 token from " + tokenUrl);
+
 		BasicAuthenticator tokenAuth = new BasicAuthenticator(username, password);
 
 		Entity<String> postEntity = Entity.entity("grant_type=client_credentials",
@@ -73,7 +79,9 @@ public class Oauth2AuthenticatorFactory implements AuthenticatorFactory {
 				.register(JacksonFeature.class).target(tokenUrl).request().post(postEntity);
 
 		try {
-			return readToken(tokenResponse);
+			String token = readToken(tokenResponse);
+			LOGGER.info("Successfully obtained OAuth2 token");
+			return token;
 		} finally {
 			tokenResponse.close();
 		}
