@@ -10,6 +10,6 @@ public class BasicAuthenticatorTest {
 
 	@Test
 	public void testCreateBasicAuth() {
-		assertEquals("BASIC dTExMTpwMzQ1", BasicAuthenticator.createBasicAuth("u111", "p345"));
+		assertEquals("Basic dTExMTpwMzQ1", BasicAuthenticator.createBasicAuth("u111", "p345"));
 	}
 }

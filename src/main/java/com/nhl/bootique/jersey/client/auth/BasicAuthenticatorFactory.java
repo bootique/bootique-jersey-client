@@ -61,7 +61,7 @@ public class BasicAuthenticatorFactory implements AuthenticatorFactory {
 		static String createBasicAuth(String username, String password) {
 			String token = username + ":" + password;
 			try {
-				return "BASIC " + DatatypeConverter.printBase64Binary(token.getBytes("UTF-8"));
+				return "Basic " + DatatypeConverter.printBase64Binary(token.getBytes("UTF-8"));
 			} catch (UnsupportedEncodingException ex) {
 				throw new IllegalStateException("Cannot encode with UTF-8", ex);
 			}
