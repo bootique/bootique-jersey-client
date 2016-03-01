@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
+import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.xml.bind.DatatypeConverter;
 
@@ -37,7 +38,7 @@ public class BasicAuthenticatorFactory implements AuthenticatorFactory {
 	}
 
 	@Override
-	public ClientRequestFilter createAuthFilter() {
+	public ClientRequestFilter createAuthFilter(Configuration filterFreeConfig) {
 		Objects.requireNonNull(username);
 		Objects.requireNonNull(password);
 

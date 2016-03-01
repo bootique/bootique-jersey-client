@@ -1,5 +1,6 @@
 ## 0.3
 
+* #4 Support for OAuth 2 authenticator
 * #5 Support for client-side Feature contributions
 * #6 Support injection into services that are registered via features
 * #7 Upgrade to Bootique 0.14

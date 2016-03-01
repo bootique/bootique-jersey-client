@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.ws.rs.client.ClientRequestFilter;
+import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Feature;
 
 import org.glassfish.jersey.client.ClientConfig;
@@ -53,14 +54,14 @@ public class HttpClientFactoryFactory {
 		// GuiceBridgeFeature as a
 		ClientGuiceBridgeFeature.register(config, injector);
 
-		return new DefaultHttpClientFactory(config, createAuthFilters());
+		return new DefaultHttpClientFactory(config, createAuthFilters(config));
 	}
 
-	protected Map<String, ClientRequestFilter> createAuthFilters() {
+	protected Map<String, ClientRequestFilter> createAuthFilters(Configuration config) {
 		Map<String, ClientRequestFilter> filters = new HashMap<>();
 
 		if (auth != null) {
-			auth.forEach((k, v) -> filters.put(k, v.createAuthFilter()));
+			auth.forEach((k, v) -> filters.put(k, v.createAuthFilter(config)));
 		}
 
 		return filters;
