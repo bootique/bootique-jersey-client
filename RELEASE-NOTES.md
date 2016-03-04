@@ -1,3 +1,7 @@
+## 0.4
+
+* #8 Client requests logger
+
 ## 0.3
 
 * #4 Support for OAuth 2 authenticator

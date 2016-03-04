@@ -43,7 +43,7 @@ public class HttpClientFactoryFactoryIT {
 	private static BQDaemonTestRuntime SERVER_APP;
 
 	@BeforeClass
-	public static void beforeClass() throws InterruptedException {
+	public static void beforeClass() {
 
 		Consumer<Bootique> configurator = b -> {
 			Module jersey = JerseyModule.builder().resource(Resource.class).build();
@@ -56,12 +56,12 @@ public class HttpClientFactoryFactoryIT {
 	}
 
 	@AfterClass
-	public static void after() throws InterruptedException {
+	public static void after() {
 		SERVER_APP.stop();
 	}
-	
+
 	private Injector mockInjector;
-	
+
 	@Before
 	public void before() {
 		mockInjector = mock(Injector.class);
@@ -147,7 +147,8 @@ public class HttpClientFactoryFactoryIT {
 		Map<String, AuthenticatorFactory> auth = new HashMap<>();
 		auth.put("a1", authenticator);
 		factoryFactory.setAuth(auth);
-		Client client = factoryFactory.createClientFactory(mockInjector, Collections.emptySet()).newAuthenticatedClient("a1");
+		Client client = factoryFactory.createClientFactory(mockInjector, Collections.emptySet())
+				.newAuthenticatedClient("a1");
 
 		Response r = client.target("http://127.0.0.1:8080/").path("/basicget").request().get();
 		assertEquals(Status.OK.getStatusCode(), r.getStatus());

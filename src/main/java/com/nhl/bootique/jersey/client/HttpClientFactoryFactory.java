@@ -3,6 +3,7 @@ package com.nhl.bootique.jersey.client;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.Configuration;
@@ -10,9 +11,13 @@ import javax.ws.rs.core.Feature;
 
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.filter.LoggingFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.Injector;
 import com.nhl.bootique.jersey.client.auth.AuthenticatorFactory;
+import com.nhl.bootique.jersey.client.log.JULSlf4jLogger;
 
 public class HttpClientFactoryFactory {
 
@@ -76,6 +81,19 @@ public class HttpClientFactoryFactory {
 
 		features.forEach(f -> config.register(f));
 
+		configRequestLogging(config);
+
 		return config;
+	}
+
+	protected void configRequestLogging(ClientConfig config) {
+
+		Logger logger = LoggerFactory.getLogger(HttpClientFactory.class);
+		if (logger.isInfoEnabled()) {
+
+			JULSlf4jLogger julWrapper = new JULSlf4jLogger(HttpClientFactory.class.getName(), logger, Level.INFO);
+			LoggingFilter logFilter = new LoggingFilter(julWrapper, false);
+			config.register(logFilter);
+		}
 	}
 }

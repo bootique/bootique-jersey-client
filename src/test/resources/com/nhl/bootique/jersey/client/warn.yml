@@ -1,0 +1,9 @@
+log:
+  level: warn
+  loggers:
+    com.nhl.bootique.jersey.client:
+      level: warn
+  appenders:
+    - type: file
+      logFormat: '%c{20}: %m%n'
+      file: target/logback/warn.log
