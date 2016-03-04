@@ -1,6 +1,7 @@
 package com.nhl.bootique.jersey.client;
 
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.joining;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -89,7 +90,7 @@ public class HttpClientFactoryFactory_LoggingIT {
 
 		File log = new File(logsDir, "debug.log");
 		List<String> lines = Files.readAllLines(log.toPath());
-		assertEquals(10, lines.size());
+		assertEquals(lines.stream().collect(joining("\n")), 10, lines.size());
 		assertTrue(lines.get(0).contains("Sending client request on thread main"));
 		assertTrue(lines.get(1).contains("GET http://127.0.0.1:8080/get"));
 		assertTrue(lines.get(3).contains("Client response received on thread main"));
