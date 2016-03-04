@@ -14,10 +14,12 @@ public class JULSlf4jLogger extends Logger {
 
 	private Map<Level, Consumer<LogRecord>> loggers;
 
-	public JULSlf4jLogger(String name, org.slf4j.Logger slfLogger, Level level) {
+	public JULSlf4jLogger(String name, org.slf4j.Logger slfLogger) {
 		super(name, null);
 
-		setLevel(level);
+		// JUL logger should pass through all log levels, so setting its
+		// level to ALL...
+		setLevel(Level.ALL);
 
 		this.loggers = new HashMap<>();
 
@@ -27,7 +29,11 @@ public class JULSlf4jLogger extends Logger {
 		loggers.put(Level.FINER, trace);
 		loggers.put(Level.FINEST, trace);
 		loggers.put(Level.FINE, log -> slfLogger.debug(log.getMessage(), log.getThrown()));
-		loggers.put(Level.INFO, log -> slfLogger.info(log.getMessage(), log.getThrown()));
+
+		// a hack: output INFO as DEBUG ... Jersey logging filter uses INFO, and
+		// it is way too verbose
+		loggers.put(Level.INFO, log -> slfLogger.debug(log.getMessage(), log.getThrown()));
+
 		loggers.put(Level.WARNING, log -> slfLogger.warn(log.getMessage(), log.getThrown()));
 		loggers.put(Level.SEVERE, log -> slfLogger.error(log.getMessage(), log.getThrown()));
 	}

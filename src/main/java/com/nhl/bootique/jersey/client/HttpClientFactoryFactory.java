@@ -3,7 +3,6 @@ package com.nhl.bootique.jersey.client;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
 
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.Configuration;
@@ -91,7 +90,7 @@ public class HttpClientFactoryFactory {
 		Logger logger = LoggerFactory.getLogger(HttpClientFactory.class);
 		if (logger.isDebugEnabled()) {
 
-			JULSlf4jLogger julWrapper = new JULSlf4jLogger(HttpClientFactory.class.getName(), logger, Level.FINE);
+			JULSlf4jLogger julWrapper = new JULSlf4jLogger(HttpClientFactory.class.getName(), logger);
 			LoggingFilter logFilter = new LoggingFilter(julWrapper, false);
 			config.register(logFilter);
 		}
