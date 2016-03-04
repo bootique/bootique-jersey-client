@@ -34,10 +34,7 @@ public class JULSlf4jLogger extends Logger {
 
 	@Override
 	public void log(LogRecord record) {
-
-		if (isLoggable(record.getLevel())) {
-			forLevel(record.getLevel()).accept(record);
-		}
+		forLevel(record.getLevel()).accept(record);
 	}
 
 	private Consumer<LogRecord> forLevel(Level level) {
