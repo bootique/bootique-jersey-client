@@ -91,7 +91,7 @@ public class HttpClientFactoryFactory {
 		Logger logger = LoggerFactory.getLogger(HttpClientFactory.class);
 		if (logger.isInfoEnabled()) {
 
-			JULSlf4jLogger julWrapper = new JULSlf4jLogger(HttpClientFactory.class.getName(), logger, Level.INFO);
+			JULSlf4jLogger julWrapper = new JULSlf4jLogger(HttpClientFactory.class.getName(), logger, Level.FINE);
 			LoggingFilter logFilter = new LoggingFilter(julWrapper, false);
 			config.register(logFilter);
 		}
