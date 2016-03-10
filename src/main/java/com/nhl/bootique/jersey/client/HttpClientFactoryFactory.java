@@ -58,14 +58,14 @@ public class HttpClientFactoryFactory {
 		// GuiceBridgeFeature as a
 		ClientGuiceBridgeFeature.register(config, injector);
 
-		return new DefaultHttpClientFactory(config, createAuthFilters(config));
+		return new DefaultHttpClientFactory(config, createAuthFilters(config, injector));
 	}
 
-	protected Map<String, ClientRequestFilter> createAuthFilters(Configuration config) {
+	protected Map<String, ClientRequestFilter> createAuthFilters(Configuration clientConfig, Injector injector) {
 		Map<String, ClientRequestFilter> filters = new HashMap<>();
 
 		if (auth != null) {
-			auth.forEach((k, v) -> filters.put(k, v.createAuthFilter(config)));
+			auth.forEach((k, v) -> filters.put(k, v.createAuthFilter(clientConfig, injector)));
 		}
 
 		return filters;

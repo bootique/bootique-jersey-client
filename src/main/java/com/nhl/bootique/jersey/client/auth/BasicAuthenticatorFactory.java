@@ -11,6 +11,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.xml.bind.DatatypeConverter;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.google.inject.Injector;
 
 /**
  * @since 0.2
@@ -36,9 +37,9 @@ public class BasicAuthenticatorFactory implements AuthenticatorFactory {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
+	
 	@Override
-	public ClientRequestFilter createAuthFilter(Configuration filterFreeConfig) {
+	public ClientRequestFilter createAuthFilter(Configuration clientConfig, Injector injector) {
 		Objects.requireNonNull(username);
 		Objects.requireNonNull(password);
 

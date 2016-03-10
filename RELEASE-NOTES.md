@@ -1,6 +1,7 @@
 ## 0.4
 
 * #8 Client requests logger
+* #9 AuthenticatorFactory should have access to Injector
 
 ## 0.3
 

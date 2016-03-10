@@ -4,6 +4,7 @@ import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.Configuration;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.google.inject.Injector;
 import com.nhl.bootique.config.PolymorphicConfiguration;
 
 /**
@@ -12,5 +13,5 @@ import com.nhl.bootique.config.PolymorphicConfiguration;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 public interface AuthenticatorFactory extends PolymorphicConfiguration {
 
-	ClientRequestFilter createAuthFilter(Configuration filterFreeConfig);
+	ClientRequestFilter createAuthFilter(Configuration clientConfig, Injector injector);
 }

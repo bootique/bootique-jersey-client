@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.google.inject.Injector;
 import com.nhl.bootique.jersey.client.auth.BasicAuthenticatorFactory.BasicAuthenticator;
 
 /**
@@ -59,9 +60,8 @@ public class Oauth2AuthenticatorFactory implements AuthenticatorFactory {
 	}
 
 	@Override
-	public ClientRequestFilter createAuthFilter(Configuration configuration) {
-
-		return new TokenAuthenticator(getToken(configuration));
+	public ClientRequestFilter createAuthFilter(Configuration clientConfig, Injector injector) {
+		return new TokenAuthenticator(getToken(clientConfig));
 	}
 
 	protected String getToken(Configuration configuration) {
