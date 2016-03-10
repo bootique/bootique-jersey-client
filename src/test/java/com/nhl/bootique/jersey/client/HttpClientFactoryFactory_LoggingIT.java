@@ -76,7 +76,7 @@ public class HttpClientFactoryFactory_LoggingIT {
 	}
 
 	@Test
-	public void testCreateClientFactory_Debug() throws IOException {
+	public void testCreateClientFactory_Debug() throws IOException, InterruptedException {
 
 		startApp("debug.yml");
 
@@ -87,6 +87,11 @@ public class HttpClientFactoryFactory_LoggingIT {
 		Response r = client.target("http://127.0.0.1:8080/get").request().get();
 		assertEquals(Status.OK.getStatusCode(), r.getStatus());
 		assertEquals("got", r.readEntity(String.class));
+
+		// wait for the log file to be flushed... there seems to be a race
+		// condition in CI, resulting in assertions below not seeing the full
+		// log
+		Thread.sleep(500);
 
 		File log = new File(logsDir, "debug.log");
 		List<String> lines = Files.readAllLines(log.toPath());
