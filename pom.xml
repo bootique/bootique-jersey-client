@@ -20,7 +20,7 @@
 	</description>
 
 	<properties>
-		<bootique-version>0.15-SNAPSHOT</bootique-version>
+		<bootique-version>0.15</bootique-version>
 		<jersey-version>2.21</jersey-version>
 	</properties>
 
@@ -45,7 +45,7 @@
 			<dependency>
 				<groupId>com.nhl.bootique.jersey</groupId>
 				<artifactId>bootique-jersey</artifactId>
-				<version>0.13</version>
+				<version>0.14</version>
 			</dependency>
 			<dependency>
 				<groupId>com.nhl.bootique.logback</groupId>
