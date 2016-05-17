@@ -1,3 +1,7 @@
+## 0.5
+
+* #11  Use a different Set<Feature> from bootique-jersey
+
 ## 0.4
 
 * #8 Client requests logger

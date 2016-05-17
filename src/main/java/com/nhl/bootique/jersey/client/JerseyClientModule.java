@@ -21,7 +21,7 @@ public class JerseyClientModule extends ConfigModule {
 	 * @return returns a {@link Multibinder} for client-side JAX-RS Features.
 	 */
 	public static Multibinder<Feature> contributeFeatures(Binder binder) {
-		return Multibinder.newSetBinder(binder, Feature.class);
+		return Multibinder.newSetBinder(binder, Feature.class, JerseyClientFeatures.class);
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class JerseyClientModule extends ConfigModule {
 	@Provides
 	@Singleton
 	HttpClientFactory createClientFactory(ConfigurationFactory configurationFactory, Injector injector,
-			Set<Feature> features) {
+			@JerseyClientFeatures Set<Feature> features) {
 		return configurationFactory.config(HttpClientFactoryFactory.class, configPrefix).createClientFactory(injector,
 				features);
 	}
