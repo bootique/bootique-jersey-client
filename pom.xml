@@ -51,7 +51,7 @@
 			<dependency>
 				<groupId>com.nhl.bootique.jersey</groupId>
 				<artifactId>bootique-jersey</artifactId>
-				<version>0.14</version>
+				<version>0.15</version>
 			</dependency>
 			<dependency>
 				<groupId>com.nhl.bootique.logback</groupId>

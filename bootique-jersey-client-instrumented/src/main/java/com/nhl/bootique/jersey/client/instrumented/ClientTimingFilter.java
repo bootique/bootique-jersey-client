@@ -23,7 +23,6 @@ public class ClientTimingFilter implements ClientRequestFilter, ClientResponseFi
 	private Timer requestTimer;
 
 	public ClientTimingFilter(MetricRegistry metricRegistry) {
-		super();
 		this.requestTimer = metricRegistry
 				.timer(MetricRegistry.name(InstrumentedClientRequestFeature.class, "client-request-timer"));
 	}
@@ -33,17 +32,23 @@ public class ClientTimingFilter implements ClientRequestFilter, ClientResponseFi
 		Timer.Context requestTimerContext = requestTimer.time();
 		requestContext.setProperty(TIMER_PROPERTY, requestTimerContext);
 
-		LOGGER.info("client request started");
+		LOGGER.info("Client request started");
 
-		// TODO: what is response "filter" below is not called? should we
-		// collect and cancel timers manually to avoid a leak?
+		// note that response filter method may not be called at all if the
+		// request results in connection exception, etc... Would be nice to
+		// trace failed requests too, but nothing in JAX RS allows us to do
+		// that directly...
 	}
 
 	@Override
 	public void filter(ClientRequestContext requestContext, ClientResponseContext responseContext) throws IOException {
 		Timer.Context requestTimerContext = (Timer.Context) requestContext.getProperty(TIMER_PROPERTY);
 
+		// TODO: this timing does not take into account reading response
+		// content... May need to add additional interceptor for that.
 		long timeNanos = requestTimerContext.stop();
-		LOGGER.info("client request finished in {} ms", timeNanos / 1000000);
+
+		LOGGER.info("Client request finished. Status: {}, time: {} ms.", responseContext.getStatus(),
+				timeNanos / 1000000);
 	}
 }
