@@ -23,7 +23,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.google.inject.Module;
-import com.nhl.bootique.BQRuntime;
 import com.nhl.bootique.Bootique;
 import com.nhl.bootique.jersey.JerseyModule;
 import com.nhl.bootique.jetty.JettyModule;
@@ -40,10 +39,10 @@ public class Oauth2AuthenticatorFactoryIT {
 			Module jersey = JerseyModule.builder().resource(TokenApi.class).build();
 			b.modules(JettyModule.class).module(jersey);
 		};
-		Function<BQRuntime, Boolean> startupCheck = r -> r.getInstance(Server.class).isStarted();
+		Function<BQDaemonTestRuntime, Boolean> startupCheck = r -> r.getRuntime().getInstance(Server.class).isStarted();
 
-		SERVER_APP = new BQDaemonTestRuntime(configurator, startupCheck);
-		SERVER_APP.start(5, TimeUnit.SECONDS, "--server");
+		SERVER_APP = new BQDaemonTestRuntime(configurator, startupCheck, "--server");
+		SERVER_APP.start(5, TimeUnit.SECONDS);
 	}
 
 	@AfterClass

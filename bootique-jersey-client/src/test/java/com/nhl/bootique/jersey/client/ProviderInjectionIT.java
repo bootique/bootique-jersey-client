@@ -53,8 +53,9 @@ public class ProviderInjectionIT {
 			b.module(JerseyModule.builder().resource(Resource.class).build());
 		};
 
-		SERVER_APP = new BQDaemonTestRuntime(configurator, r -> r.getInstance(Server.class).isStarted());
-		SERVER_APP.start(5, TimeUnit.SECONDS, "--server");
+		SERVER_APP = new BQDaemonTestRuntime(configurator, r -> r.getRuntime().getInstance(Server.class).isStarted(),
+				"--server");
+		SERVER_APP.start(5, TimeUnit.SECONDS);
 	}
 
 	@AfterClass
@@ -83,7 +84,7 @@ public class ProviderInjectionIT {
 	@Test
 	public void testResponse() {
 
-		Client client = clientApp.createRuntime().getInstance(HttpClientFactory.class).newClient();
+		Client client = clientApp.getRuntime().getInstance(HttpClientFactory.class).newClient();
 
 		WebTarget target = client.target("http://127.0.0.1:8080/");
 
@@ -157,7 +158,7 @@ public class ProviderInjectionIT {
 		@Override
 		public TestResponse readFrom(Class<TestResponse> type, Type genericType, Annotation[] annotations,
 				MediaType mediaType, MultivaluedMap<String, String> httpHeaders, InputStream entityStream)
-						throws IOException, WebApplicationException {
+				throws IOException, WebApplicationException {
 
 			String responseLine;
 			try (BufferedReader in = new BufferedReader(new InputStreamReader(entityStream, "UTF-8"))) {

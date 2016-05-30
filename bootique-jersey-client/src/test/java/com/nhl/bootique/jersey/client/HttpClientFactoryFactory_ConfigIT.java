@@ -3,20 +3,16 @@ package com.nhl.bootique.jersey.client;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.function.Function;
+import java.io.IOException;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import com.nhl.bootique.config.ConfigurationSource;
-import com.nhl.bootique.config.YamlConfigurationFactory;
-import com.nhl.bootique.env.Environment;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
+import com.nhl.bootique.config.ConfigurationFactory;
+import com.nhl.bootique.config.jackson.JsonNodeConfigurationFactory;
 import com.nhl.bootique.jackson.DefaultJacksonService;
 import com.nhl.bootique.jackson.JacksonService;
 import com.nhl.bootique.jersey.client.auth.AuthenticatorFactory;
@@ -25,29 +21,19 @@ import com.nhl.bootique.log.DefaultBootLogger;
 
 public class HttpClientFactoryFactory_ConfigIT {
 
-	private ConfigurationSource mockConfigSource;
-	private Environment mockEnvironment;
-
-	@Before
-	public void before() {
-		mockConfigSource = mock(ConfigurationSource.class);
-		mockEnvironment = mock(Environment.class);
-	}
-
-	private YamlConfigurationFactory factory(String yaml) {
-		when(mockConfigSource.readConfig(any())).thenAnswer(i -> {
-
-			@SuppressWarnings("unchecked")
-			Function<InputStream, Object> processor = i.getArgumentAt(0, Function.class);
-			InputStream in = new ByteArrayInputStream(yaml.getBytes());
-
-			return processor.apply(in);
-		});
+	private ConfigurationFactory factory(String yaml) {
 
 		// not using a mock; making sure all Jackson extensions are loaded
 		JacksonService jacksonService = new DefaultJacksonService(new DefaultBootLogger(true));
 
-		return new YamlConfigurationFactory(mockConfigSource, mockEnvironment, jacksonService);
+		YAMLParser parser;
+		try {
+			parser = new YAMLFactory().createParser(yaml);
+			JsonNode rootNode = jacksonService.newObjectMapper().readTree(parser);
+			return new JsonNodeConfigurationFactory(rootNode, jacksonService.newObjectMapper());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Test

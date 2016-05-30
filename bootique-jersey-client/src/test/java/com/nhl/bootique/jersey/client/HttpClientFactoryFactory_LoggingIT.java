@@ -30,7 +30,6 @@ import org.junit.Test;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.nhl.bootique.BQRuntime;
 import com.nhl.bootique.Bootique;
 import com.nhl.bootique.jersey.JerseyModule;
 import com.nhl.bootique.jetty.JettyModule;
@@ -47,11 +46,11 @@ public class HttpClientFactoryFactory_LoggingIT {
 			Module jersey = JerseyModule.builder().resource(Resource.class).build();
 			b.modules(JettyModule.class, LogbackModule.class).module(jersey);
 		};
-		Function<BQRuntime, Boolean> startupCheck = r -> r.getInstance(Server.class).isStarted();
+		Function<BQDaemonTestRuntime, Boolean> startupCheck = r -> r.getRuntime().getInstance(Server.class).isStarted();
 
-		serverApp = new BQDaemonTestRuntime(configurator, startupCheck);
-		serverApp.start(5, TimeUnit.SECONDS, "--server",
+		serverApp = new BQDaemonTestRuntime(configurator, startupCheck, "--server",
 				"--config=src/test/resources/com/nhl/bootique/jersey/client/" + config);
+		serverApp.start(5, TimeUnit.SECONDS);
 	}
 
 	@After

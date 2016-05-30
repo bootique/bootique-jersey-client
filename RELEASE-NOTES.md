@@ -1,6 +1,7 @@
 ## 0.5
 
 * #11  Use a different Set<Feature> from bootique-jersey
+* #13 Upgrade to BQ 0.17
 
 ## 0.4
 
