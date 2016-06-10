@@ -49,8 +49,11 @@ public class ProviderInjectionIT {
 	public static void startJetty() {
 
 		Consumer<Bootique> configurator = b -> {
+			Module jersey = (binder) -> JerseyModule.contributeResources(binder).addBinding().to(Resource.class);
+
 			b.module(JettyModule.class);
-			b.module(JerseyModule.builder().resource(Resource.class).build());
+			b.module(JerseyModule.class);
+			b.module(jersey);
 		};
 
 		SERVER_APP = new BQDaemonTestRuntime(configurator, r -> r.getRuntime().getInstance(Server.class).isStarted(),

@@ -36,8 +36,8 @@ public class Oauth2AuthenticatorFactoryIT {
 	public static void beforeClass() throws InterruptedException {
 
 		Consumer<Bootique> configurator = b -> {
-			Module jersey = JerseyModule.builder().resource(TokenApi.class).build();
-			b.modules(JettyModule.class).module(jersey);
+			Module jersey = (binder) -> JerseyModule.contributeResources(binder).addBinding().to(TokenApi.class);
+			b.modules(JettyModule.class, JerseyModule.class).module(jersey);
 		};
 		Function<BQDaemonTestRuntime, Boolean> startupCheck = r -> r.getRuntime().getInstance(Server.class).isStarted();
 

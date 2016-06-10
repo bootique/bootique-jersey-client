@@ -43,8 +43,8 @@ public class HttpClientFactoryFactory_LoggingIT {
 	private void startApp(String config) {
 
 		Consumer<Bootique> configurator = b -> {
-			Module jersey = JerseyModule.builder().resource(Resource.class).build();
-			b.modules(JettyModule.class, LogbackModule.class).module(jersey);
+			Module jersey = (binder) -> JerseyModule.contributeResources(binder).addBinding().to(Resource.class);
+			b.modules(JettyModule.class, JerseyModule.class, LogbackModule.class).module(jersey);
 		};
 		Function<BQDaemonTestRuntime, Boolean> startupCheck = r -> r.getRuntime().getInstance(Server.class).isStarted();
 
