@@ -1,9 +1,9 @@
-[![Build Status](https://travis-ci.org/nhl/bootique-jersey-client.svg)](https://travis-ci.org/nhl/bootique-jersey-client)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.nhl.bootique.jersey.client/bootique-jersey-client/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.nhl.bootique.jersey.client/bootique-jersey-client/)
+[![Build Status](https://travis-ci.org/bootique/bootique-jersey-client.svg)](https://travis-ci.org/bootique/bootique-jersey-client)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/id.bootique.jersey.client/bootique-jersey-client/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.bootique.jersey.client/bootique-jersey-client/)
 
 # bootique-jersey-client
 
-Integrates JAX-RS-based HTTP client in [Bootique](https://github.com/nhl/bootique) with support for various types of 
+Integrates JAX-RS-based HTTP client in [Bootique](http://bootique.io) with support for various types of 
 server authentication (BASIC, OAuth2, etc.). Implementation is built on top of [Jersey](https://jersey.java.net/) 
 and Grizzly connector.
  
@@ -13,7 +13,7 @@ Add the module to your Bootique app:
 
 ```xml
 <dependency>
-	<groupId>com.nhl.bootique.jersey.client</groupId>
+	<groupId>id.bootique.jersey.client</groupId>
 	<artifactId>bootique-jersey-client</artifactId>
 </dependency>
 ```
@@ -22,7 +22,7 @@ Or if you want to use metrics, add the instrumented flavor of the client instead
 
 ```xml
 <dependency>
-	<groupId>com.nhl.bootique.jersey.client</groupId>
+	<groupId>id.bootique.jersey.client</groupId>
 	<artifactId>bootique-jersey-client-instrumented</artifactId>
 </dependency>
 ```
