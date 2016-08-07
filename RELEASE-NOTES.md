@@ -1,3 +1,7 @@
+## 0.6
+
+* #14 Move to io.bootique namespace.
+
 ## 0.5
 
 * #11  Use a different Set<Feature> from bootique-jersey
