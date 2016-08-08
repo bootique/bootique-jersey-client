@@ -3,9 +3,9 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>io.bootique.parent</groupId>
-		<artifactId>bootique-parent</artifactId>
-		<version>0.12</version>
+		<groupId>io.bootique.modules.parent</groupId>
+		<artifactId>bootique-modules-parent</artifactId>
+		<version>0.2</version>
 	</parent>
 
 	<groupId>io.bootique.jersey.client</groupId>
@@ -30,12 +30,6 @@
 
 		<jersey-version>2.21</jersey-version>
 	</properties>
-
-	<scm>
-		<developerConnection>scm:git:ssh://git@github.com/bootique/bootique-jersey-client</developerConnection>
-		<url>https://github.com/bootique/bootique-jersey-client</url>
-		<tag>HEAD</tag>
-	</scm>
 
 	<dependencyManagement>
 		<dependencies>
