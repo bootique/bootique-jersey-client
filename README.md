@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/bootique/bootique-jersey-client.svg)](https://travis-ci.org/bootique/bootique-jersey-client)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/id.bootique.jersey.client/bootique-jersey-client/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.bootique.jersey.client/bootique-jersey-client/)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.bootique.jersey.client/bootique-jersey-client/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.bootique.jersey.client/bootique-jersey-client/)
 
 # bootique-jersey-client
 
