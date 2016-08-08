@@ -1,5 +1,6 @@
 ## 0.6
 
+* #10 Support Gzip compression by default
 * #14 Move to io.bootique namespace.
 
 ## 0.5
