@@ -3,6 +3,7 @@ package io.bootique.jersey.client;
 import com.google.inject.Injector;
 import io.bootique.jersey.client.auth.AuthenticatorFactory;
 import io.bootique.jersey.client.log.JULSlf4jLogger;
+import io.bootique.resource.ResourceFactory;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.filter.EncodingFeature;
@@ -14,8 +15,16 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Feature;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class HttpClientFactoryFactory {
@@ -26,9 +35,31 @@ public class HttpClientFactoryFactory {
     int connectTimeoutMs;
     int asyncThreadPoolSize;
     Map<String, AuthenticatorFactory> auth;
+    ResourceFactory trustStore;
+    String trustStorePassword;
 
     public HttpClientFactoryFactory() {
         this.compression = true;
+        this.trustStorePassword = "changeit";
+    }
+
+    /**
+     * Sets trust store location for clients that need to accept server certificates not known to the JVM.
+     *
+     * @param trustStore a resource URL pointing to the location of truststore.
+     * @since 0.7
+     */
+    public void setTrustStore(ResourceFactory trustStore) {
+        this.trustStore = trustStore;
+    }
+
+    /**
+     * Sets trust store password. Default is "changeit".
+     *
+     * @param trustStorePassword trust store password.
+     */
+    public void setTrustStorePassword(String trustStorePassword) {
+        this.trustStorePassword = Objects.requireNonNull(trustStorePassword);
     }
 
     /**
@@ -72,7 +103,27 @@ public class HttpClientFactoryFactory {
         // GuiceBridgeFeature as a
         ClientGuiceBridgeFeature.register(config, injector);
 
-        return new DefaultHttpClientFactory(config, createAuthFilters(config, injector));
+        KeyStore trustStore = createTrustStore();
+
+        return new DefaultHttpClientFactory(config, trustStore, createAuthFilters(config, injector));
+    }
+
+    protected KeyStore createTrustStore() {
+        if (this.trustStore == null) {
+            return null;
+        }
+
+        URL url = this.trustStore.getUrl();
+        KeyStore trustStore;
+
+        try (InputStream in = url.openStream()) {
+            trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+            trustStore.load(in, "supersecret".toCharArray());
+        } catch (CertificateException | NoSuchAlgorithmException | KeyStoreException | IOException e) {
+            throw new RuntimeException("Error loading client trust store from " + url, e);
+        }
+
+        return trustStore;
     }
 
     protected Map<String, ClientRequestFilter> createAuthFilters(Configuration clientConfig, Injector injector) {
@@ -94,7 +145,7 @@ public class HttpClientFactoryFactory {
 
         features.forEach(f -> config.register(f));
 
-        if(compression) {
+        if (compression) {
             config.register(new EncodingFeature(GZipEncoder.class));
         }
 

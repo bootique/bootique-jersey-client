@@ -1,40 +1,49 @@
 package io.bootique.jersey.client;
 
-import java.util.Map;
+import org.glassfish.jersey.client.ClientConfig;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.ClientRequestFilter;
-
-import org.glassfish.jersey.client.ClientConfig;
+import java.security.KeyStore;
+import java.util.Map;
 
 /**
  * @since 0.2
  */
 public class DefaultHttpClientFactory implements HttpClientFactory {
 
-	private ClientConfig config;
-	private Map<String, ClientRequestFilter> authFilters;
+    private ClientConfig config;
+    private Map<String, ClientRequestFilter> authFilters;
+    private KeyStore trustStore;
 
-	public DefaultHttpClientFactory(ClientConfig config, Map<String, ClientRequestFilter> authFilters) {
-		this.authFilters = authFilters;
-		this.config = config;
-	}
+    public DefaultHttpClientFactory(ClientConfig config, KeyStore trustStore, Map<String, ClientRequestFilter> authFilters) {
+        this.authFilters = authFilters;
+        this.config = config;
+        this.trustStore = trustStore;
+    }
 
-	@Override
-	public Client newClient() {
-		return ClientBuilder.newClient(config);
-	}
+    @Override
+    public Client newClient() {
 
-	@Override
-	public Client newAuthenticatedClient(String authName) {
+        ClientBuilder builder = ClientBuilder.newBuilder().withConfig(config);
 
-		ClientRequestFilter filter = authFilters.get(authName);
-		if (filter == null) {
-			throw new IllegalArgumentException("No authenticator configured for name: " + authName);
-		}
+        if (trustStore != null) {
+            builder = builder.trustStore(trustStore);
+        }
 
-		return newClient().register(filter);
-	}
+        return builder.build();
+    }
+
+    @Override
+    public Client newAuthenticatedClient(String authName) {
+
+        ClientRequestFilter filter = authFilters.get(authName);
+        if (filter == null) {
+            throw new IllegalArgumentException("No authenticator configured for name: " + authName);
+        }
+
+        return newClient().register(filter);
+    }
 
 }

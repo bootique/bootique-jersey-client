@@ -1,22 +1,20 @@
 package io.bootique.jersey.client;
 
+import org.glassfish.jersey.client.ClientConfig;
+import org.junit.Before;
+import org.junit.Test;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientRequestFilter;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientRequestFilter;
-
-import io.bootique.jersey.client.DefaultHttpClientFactory;
-import org.glassfish.jersey.client.ClientConfig;
-import org.junit.Before;
-import org.junit.Test;
 
 public class DefaultHttpClientFactoryTest {
 
@@ -36,7 +34,7 @@ public class DefaultHttpClientFactoryTest {
 
 		config.property("x", "y");
 
-		DefaultHttpClientFactory factory = new DefaultHttpClientFactory(config, Collections.emptyMap());
+		DefaultHttpClientFactory factory = new DefaultHttpClientFactory(config, null, Collections.emptyMap());
 		Client c = factory.newClient();
 		assertNotNull(c);
 
@@ -52,7 +50,7 @@ public class DefaultHttpClientFactoryTest {
 		authFilters.put("one", mockAuth1);
 		authFilters.put("two", mockAuth2);
 
-		DefaultHttpClientFactory factory = new DefaultHttpClientFactory(config, authFilters);
+		DefaultHttpClientFactory factory = new DefaultHttpClientFactory(config, null, authFilters);
 		Client c = factory.newAuthenticatedClient("one");
 		assertNotNull(c);
 
@@ -70,7 +68,7 @@ public class DefaultHttpClientFactoryTest {
 		authFilters.put("one", mockAuth1);
 		authFilters.put("two", mockAuth2);
 
-		DefaultHttpClientFactory factory = new DefaultHttpClientFactory(config, authFilters);
+		DefaultHttpClientFactory factory = new DefaultHttpClientFactory(config, null, authFilters);
 		factory.newAuthenticatedClient("three");
 	}
 }

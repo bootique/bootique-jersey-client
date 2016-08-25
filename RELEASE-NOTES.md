@@ -1,3 +1,7 @@
+## 0.7
+
+* #15 Support for configuring trust store
+
 ## 0.6
 
 * #10 Support Gzip compression by default
