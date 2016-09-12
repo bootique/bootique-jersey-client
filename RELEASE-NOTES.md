@@ -1,6 +1,7 @@
 ## 0.7
 
 * #15 Support for configuring trust store
+* #16 Upgrade to Bootique 0.20
 
 ## 0.6
 
