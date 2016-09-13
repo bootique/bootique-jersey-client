@@ -118,7 +118,7 @@ public class HttpClientFactoryFactory {
 
         try (InputStream in = url.openStream()) {
             trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            trustStore.load(in, "supersecret".toCharArray());
+            trustStore.load(in, trustStorePassword.toCharArray());
         } catch (CertificateException | NoSuchAlgorithmException | KeyStoreException | IOException e) {
             throw new RuntimeException("Error loading client trust store from " + url, e);
         }
