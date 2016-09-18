@@ -3,7 +3,6 @@ package io.bootique.jersey.client;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import io.bootique.BQCoreModule;
-import io.bootique.Bootique;
 import io.bootique.jersey.JerseyModule;
 import io.bootique.jetty.JettyModule;
 import io.bootique.logback.LogbackModule;
@@ -26,7 +25,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Level;
 
@@ -45,23 +43,23 @@ public class HttpClientFactoryFactory_LoggingIT {
 
     private void startApp(String config) {
 
-        Consumer<Bootique> configurator = b -> {
-            Module extensions = (binder) -> {
-                JerseyModule.contributeResources(binder).addBinding().to(Resource.class);
+        Module extensions = (binder) -> {
+            JerseyModule.contributeResources(binder).addBinding().to(Resource.class);
 
-                // TODO: this test is seriously dirty.. we don't start the client from Bootique,
-                // yet we reuse Bootique Logback configuration for client logging.
-                // so here we are turning off logging from the server....
-                BQCoreModule.contributeLogLevels(binder).addBinding("org.eclipse.jetty.server").toInstance(Level.OFF);
-                BQCoreModule.contributeLogLevels(binder).addBinding("org.eclipse.jetty.util").toInstance(Level.OFF);
-            };
-            b.modules(JettyModule.class, JerseyModule.class, LogbackModule.class).module(extensions);
+            // TODO: this test is seriously dirty.. we don't start the client from Bootique,
+            // yet we reuse Bootique Logback configuration for client logging.
+            // so here we are turning off logging from the server....
+            BQCoreModule.contributeLogLevels(binder).addBinding("org.eclipse.jetty.server").toInstance(Level.OFF);
+            BQCoreModule.contributeLogLevels(binder).addBinding("org.eclipse.jetty.util").toInstance(Level.OFF);
         };
-
+        
         Function<BQDaemonTestRuntime, Boolean> startupCheck = r -> r.getRuntime().getInstance(Server.class).isStarted();
 
-        serverFactory.newRuntime().configurator(configurator).startupCheck(startupCheck).start("--server",
-                "--config=src/test/resources/io/bootique/jersey/client/" + config);
+        serverFactory.app("--server", "--config=src/test/resources/io/bootique/jersey/client/" + config)
+                .modules(JettyModule.class, JerseyModule.class, LogbackModule.class)
+                .module(extensions)
+                .startupCheck(startupCheck)
+                .start();
     }
 
     @Before
