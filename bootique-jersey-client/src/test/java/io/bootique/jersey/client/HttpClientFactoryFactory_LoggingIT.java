@@ -52,7 +52,7 @@ public class HttpClientFactoryFactory_LoggingIT {
             BQCoreModule.contributeLogLevels(binder).addBinding("org.eclipse.jetty.server").toInstance(Level.OFF);
             BQCoreModule.contributeLogLevels(binder).addBinding("org.eclipse.jetty.util").toInstance(Level.OFF);
         };
-        
+
         Function<BQDaemonTestRuntime, Boolean> startupCheck = r -> r.getRuntime().getInstance(Server.class).isStarted();
 
         serverFactory.app("--server", "--config=src/test/resources/io/bootique/jersey/client/" + config)

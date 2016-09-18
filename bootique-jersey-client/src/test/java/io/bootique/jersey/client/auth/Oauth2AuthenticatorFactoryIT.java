@@ -1,14 +1,15 @@
 package io.bootique.jersey.client.auth;
 
 import com.google.inject.Module;
-import io.bootique.Bootique;
 import io.bootique.jersey.JerseyModule;
 import io.bootique.jetty.JettyModule;
 import io.bootique.test.BQDaemonTestRuntime;
+import io.bootique.test.junit.BQDaemonTestFactory;
 import org.eclipse.jetty.server.Server;
 import org.glassfish.jersey.client.ClientConfig;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 import javax.ws.rs.Consumes;
@@ -20,78 +21,79 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
 
 public class Oauth2AuthenticatorFactoryIT {
 
-	private static BQDaemonTestRuntime SERVER_APP;
+    @ClassRule
+    public static BQDaemonTestFactory SERVER_APP_FACTORY = new BQDaemonTestFactory();
 
-	@BeforeClass
-	public static void beforeClass() throws InterruptedException {
+    private static BQDaemonTestRuntime SERVER_APP;
 
-		Consumer<Bootique> configurator = b -> {
-			Module jersey = (binder) -> JerseyModule.contributeResources(binder).addBinding().to(TokenApi.class);
-			b.modules(JettyModule.class, JerseyModule.class).module(jersey);
-		};
-		Function<BQDaemonTestRuntime, Boolean> startupCheck = r -> r.getRuntime().getInstance(Server.class).isStarted();
+    @BeforeClass
+    public static void beforeClass() throws InterruptedException {
 
-		SERVER_APP = new BQDaemonTestRuntime(configurator, startupCheck, "--server");
-		SERVER_APP.start(5, TimeUnit.SECONDS);
-	}
+        Module jersey = (binder) -> JerseyModule.contributeResources(binder).addBinding().to(TokenApi.class);
+        Function<BQDaemonTestRuntime, Boolean> startupCheck = r -> r.getRuntime().getInstance(Server.class).isStarted();
 
-	@AfterClass
-	public static void after() throws InterruptedException {
-		SERVER_APP.stop();
-	}
+        SERVER_APP = SERVER_APP_FACTORY.app("--server")
+                .modules(JettyModule.class, JerseyModule.class)
+                .module(jersey)
+                .startupCheck(startupCheck)
+                .start();
+    }
 
-	@Test
-	public void testGetToken() {
+    @AfterClass
+    public static void after() throws InterruptedException {
+        SERVER_APP.stop();
+    }
 
-		Oauth2AuthenticatorFactory factory = new Oauth2AuthenticatorFactory();
-		factory.setPassword("p");
-		factory.setUsername("u");
-		factory.setTokenUrl("http://127.0.0.1:8080/token");
+    @Test
+    public void testGetToken() {
 
-		ClientConfig config = new ClientConfig();
-		assertEquals("t:client_credentials:Basic dTpw", factory.getToken(config));
-	}
+        Oauth2AuthenticatorFactory factory = new Oauth2AuthenticatorFactory();
+        factory.setPassword("p");
+        factory.setUsername("u");
+        factory.setTokenUrl("http://127.0.0.1:8080/token");
 
-	@Test(expected = RuntimeException.class)
-	public void testGetToken_Error() {
+        ClientConfig config = new ClientConfig();
+        assertEquals("t:client_credentials:Basic dTpw", factory.getToken(config));
+    }
 
-		Oauth2AuthenticatorFactory factory = new Oauth2AuthenticatorFactory();
-		factory.setPassword("p");
-		factory.setUsername("u");
-		factory.setTokenUrl("http://127.0.0.1:8080/token_error");
+    @Test(expected = RuntimeException.class)
+    public void testGetToken_Error() {
 
-		ClientConfig config = new ClientConfig();
-		factory.getToken(config);
-	}
+        Oauth2AuthenticatorFactory factory = new Oauth2AuthenticatorFactory();
+        factory.setPassword("p");
+        factory.setUsername("u");
+        factory.setTokenUrl("http://127.0.0.1:8080/token_error");
 
-	@Path("/")
-	@Produces(MediaType.APPLICATION_JSON)
-	public static class TokenApi {
+        ClientConfig config = new ClientConfig();
+        factory.getToken(config);
+    }
 
-		@POST
-		@Path("token")
-		@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-		public String post(@FormParam("grant_type") String grantType, @HeaderParam("authorization") String auth) {
-			return String.format(
-					"{\"access_token\":\"t:%s:%s\",\"token_type\":\"example\","
-							+ "\"expires_in\":3600,\"refresh_token\":\"bla\",\"example_parameter\":\"example_value\"}",
-					grantType, auth);
-		}
+    @Path("/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public static class TokenApi {
 
-		@POST
-		@Path("token_error")
-		@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-		public Response post_error(@FormParam("grant_type") String grantType,
-				@HeaderParam("authorization") String auth) {
-			return Response.status(Status.BAD_REQUEST).entity("{\"error\":\"invalid_request\"}").build();
-		}
-	}
+        @POST
+        @Path("token")
+        @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+        public String post(@FormParam("grant_type") String grantType, @HeaderParam("authorization") String auth) {
+            return String.format(
+                    "{\"access_token\":\"t:%s:%s\",\"token_type\":\"example\","
+                            + "\"expires_in\":3600,\"refresh_token\":\"bla\",\"example_parameter\":\"example_value\"}",
+                    grantType, auth);
+        }
+
+        @POST
+        @Path("token_error")
+        @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+        public Response post_error(@FormParam("grant_type") String grantType,
+                                   @HeaderParam("authorization") String auth) {
+            return Response.status(Status.BAD_REQUEST).entity("{\"error\":\"invalid_request\"}").build();
+        }
+    }
 }

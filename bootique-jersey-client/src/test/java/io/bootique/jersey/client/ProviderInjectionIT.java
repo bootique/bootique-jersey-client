@@ -2,15 +2,18 @@ package io.bootique.jersey.client;
 
 import com.google.inject.Inject;
 import com.google.inject.Module;
-import io.bootique.Bootique;
 import io.bootique.jersey.JerseyModule;
 import io.bootique.jetty.JettyModule;
 import io.bootique.test.BQDaemonTestRuntime;
 import io.bootique.test.BQTestRuntime;
+import io.bootique.test.junit.BQDaemonTestFactory;
+import io.bootique.test.junit.BQTestFactory;
 import org.eclipse.jetty.server.Server;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
@@ -33,142 +36,135 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
 
 public class ProviderInjectionIT {
 
-	private static BQDaemonTestRuntime SERVER_APP;
+    @ClassRule
+    public static BQDaemonTestFactory SERVER_APP_FACTORY = new BQDaemonTestFactory();
+    private static BQDaemonTestRuntime SERVER_APP;
+    @Rule
+    public BQTestFactory CLIENT_FACTORY = new BQTestFactory();
+    private BQTestRuntime clientApp;
 
-	@BeforeClass
-	public static void startJetty() {
+    @BeforeClass
+    public static void startJetty() {
+        Module jersey = (binder) -> JerseyModule.contributeResources(binder).addBinding().to(Resource.class);
+        Function<BQDaemonTestRuntime, Boolean> startupCheck = r -> r.getRuntime().getInstance(Server.class).isStarted();
 
-		Consumer<Bootique> configurator = b -> {
-			Module jersey = (binder) -> JerseyModule.contributeResources(binder).addBinding().to(Resource.class);
+        SERVER_APP = SERVER_APP_FACTORY.app("--server")
+                .modules(JettyModule.class, JerseyModule.class)
+                .module(jersey)
+                .startupCheck(startupCheck)
+                .start();
+    }
 
-			b.module(JettyModule.class);
-			b.module(JerseyModule.class);
-			b.module(jersey);
-		};
+    @AfterClass
+    public static void stopJetty() {
+        SERVER_APP.stop();
+    }
 
-		SERVER_APP = new BQDaemonTestRuntime(configurator, r -> r.getRuntime().getInstance(Server.class).isStarted(),
-				"--server");
-		SERVER_APP.start(5, TimeUnit.SECONDS);
-	}
+    @Before
+    public void before() {
 
-	@AfterClass
-	public static void stopJetty() {
-		SERVER_APP.stop();
-	}
+        Module module = binder -> {
+            JerseyClientModule.contributeFeatures(binder).addBinding().to(TestResponseReaderFeature.class);
+            binder.bind(InjectedService.class);
+        };
 
-	private BQTestRuntime clientApp;
+        this.clientApp = CLIENT_FACTORY.app().module(JerseyClientModule.class).module(module).createRuntime();
+    }
 
-	@Before
-	public void before() {
+    @Test
+    public void testResponse() {
 
-		Consumer<Bootique> clientConfigurator = b -> {
-			b.module(JerseyClientModule.class);
+        Client client = clientApp.getRuntime().getInstance(HttpClientFactory.class).newClient();
 
-			Module module = binder -> {
-				JerseyClientModule.contributeFeatures(binder).addBinding().to(TestResponseReaderFeature.class);
-				binder.bind(InjectedService.class);
-			};
-			b.module(module);
-		};
+        WebTarget target = client.target("http://127.0.0.1:8080/");
 
-		this.clientApp = new BQTestRuntime(clientConfigurator);
-	}
+        Response r1 = target.request().get();
+        assertEquals(Status.OK.getStatusCode(), r1.getStatus());
+        assertEquals("[bare_string]_1", r1.readEntity(TestResponse.class).toString());
+        r1.close();
 
-	@Test
-	public void testResponse() {
+        Response r2 = target.request().get();
+        assertEquals(Status.OK.getStatusCode(), r2.getStatus());
+        assertEquals("[bare_string]_2", r2.readEntity(TestResponse.class).toString());
+        r2.close();
+    }
 
-		Client client = clientApp.getRuntime().getInstance(HttpClientFactory.class).newClient();
+    @Path("/")
+    @Produces(MediaType.TEXT_PLAIN)
+    public static class Resource {
 
-		WebTarget target = client.target("http://127.0.0.1:8080/");
+        @GET
+        public String get() {
+            return "bare_string";
+        }
+    }
 
-		Response r1 = target.request().get();
-		assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-		assertEquals("[bare_string]_1", r1.readEntity(TestResponse.class).toString());
-		r1.close();
+    public static class TestResponse {
 
-		Response r2 = target.request().get();
-		assertEquals(Status.OK.getStatusCode(), r2.getStatus());
-		assertEquals("[bare_string]_2", r2.readEntity(TestResponse.class).toString());
-		r2.close();
-	}
+        private String string;
 
-	@Path("/")
-	@Produces(MediaType.TEXT_PLAIN)
-	public static class Resource {
+        public TestResponse(String string) {
+            this.string = string;
+        }
 
-		@GET
-		public String get() {
-			return "bare_string";
-		}
-	}
+        @Override
+        public String toString() {
+            return string;
+        }
+    }
 
-	public static class TestResponse {
+    public static class InjectedService {
 
-		private String string;
+        private AtomicInteger atomicInt = new AtomicInteger();
 
-		public TestResponse(String string) {
-			this.string = string;
-		}
+        public int getNext() {
+            return atomicInt.incrementAndGet();
+        }
+    }
 
-		@Override
-		public String toString() {
-			return string;
-		}
-	}
+    public static class TestResponseReaderFeature implements Feature {
+        @Override
+        public boolean configure(FeatureContext context) {
+            context.register(TestResponseReader.class);
+            return true;
+        }
+    }
 
-	public static class InjectedService {
+    @Provider
+    public static class TestResponseReader implements MessageBodyReader<TestResponse> {
 
-		private AtomicInteger atomicInt = new AtomicInteger();
+        private InjectedService service;
 
-		public int getNext() {
-			return atomicInt.incrementAndGet();
-		}
-	}
+        @Inject
+        public TestResponseReader(InjectedService service) {
+            this.service = service;
+        }
 
-	public static class TestResponseReaderFeature implements Feature {
-		@Override
-		public boolean configure(FeatureContext context) {
-			context.register(TestResponseReader.class);
-			return true;
-		}
-	}
+        @Override
+        public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
+            return type.equals(TestResponse.class);
+        }
 
-	@Provider
-	public static class TestResponseReader implements MessageBodyReader<TestResponse> {
+        @Override
+        public TestResponse readFrom(Class<TestResponse> type, Type genericType, Annotation[] annotations,
+                                     MediaType mediaType, MultivaluedMap<String, String> httpHeaders, InputStream entityStream)
+                throws IOException, WebApplicationException {
 
-		private InjectedService service;
+            String responseLine;
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(entityStream, "UTF-8"))) {
+                responseLine = in.readLine();
+            }
 
-		@Inject
-		public TestResponseReader(InjectedService service) {
-			this.service = service;
-		}
-
-		@Override
-		public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-			return type.equals(TestResponse.class);
-		}
-
-		@Override
-		public TestResponse readFrom(Class<TestResponse> type, Type genericType, Annotation[] annotations,
-				MediaType mediaType, MultivaluedMap<String, String> httpHeaders, InputStream entityStream)
-				throws IOException, WebApplicationException {
-
-			String responseLine;
-			try (BufferedReader in = new BufferedReader(new InputStreamReader(entityStream, "UTF-8"))) {
-				responseLine = in.readLine();
-			}
-
-			String s = String.format("[%s]_%s", responseLine, service.getNext());
-			return new TestResponse(s);
-		}
-	}
+            String s = String.format("[%s]_%s", responseLine, service.getNext());
+            return new TestResponse(s);
+        }
+    }
 
 }

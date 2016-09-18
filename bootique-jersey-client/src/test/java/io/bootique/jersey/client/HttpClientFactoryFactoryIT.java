@@ -2,16 +2,17 @@ package io.bootique.jersey.client;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import io.bootique.Bootique;
 import io.bootique.jersey.JerseyModule;
 import io.bootique.jersey.client.auth.AuthenticatorFactory;
 import io.bootique.jersey.client.auth.BasicAuthenticatorFactory;
 import io.bootique.jetty.JettyModule;
 import io.bootique.test.BQDaemonTestRuntime;
+import io.bootique.test.junit.BQDaemonTestFactory;
 import org.eclipse.jetty.server.Server;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
@@ -28,8 +29,6 @@ import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
@@ -38,20 +37,22 @@ import static org.mockito.Mockito.mock;
 
 public class HttpClientFactoryFactoryIT {
 
+    @ClassRule
+    public static BQDaemonTestFactory SERVER_APP_FACTORY = new BQDaemonTestFactory();
+
     private static BQDaemonTestRuntime SERVER_APP;
     private Injector mockInjector;
 
     @BeforeClass
     public static void beforeClass() {
-
-        Consumer<Bootique> configurator = b -> {
-            Module jersey = (binder) -> JerseyModule.contributeResources(binder).addBinding().to(Resource.class);
-            b.modules(JettyModule.class, JerseyModule.class).module(jersey);
-        };
+        Module jersey = (binder) -> JerseyModule.contributeResources(binder).addBinding().to(Resource.class);
         Function<BQDaemonTestRuntime, Boolean> startupCheck = r -> r.getRuntime().getInstance(Server.class).isStarted();
 
-        SERVER_APP = new BQDaemonTestRuntime(configurator, startupCheck, "--server");
-        SERVER_APP.start(5, TimeUnit.SECONDS);
+        SERVER_APP = SERVER_APP_FACTORY.app("--server")
+                .modules(JettyModule.class, JerseyModule.class)
+                .module(jersey)
+                .startupCheck(startupCheck)
+                .start();
     }
 
     @AfterClass
