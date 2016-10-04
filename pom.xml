@@ -23,10 +23,10 @@
 	</modules>
 
 	<properties>
-		<bootique-version>0.20-SNAPSHOT</bootique-version>
-		<bootique-metrics-version>0.8-SNAPSHOT</bootique-metrics-version>
-		<bootique-logback-version>0.12-SNAPSHOT</bootique-logback-version>
-		<bootique-jersey-version>0.19-SNAPSHOT</bootique-jersey-version>
+		<bootique-version>0.20</bootique-version>
+		<bootique-metrics-version>0.8</bootique-metrics-version>
+		<bootique-logback-version>0.12</bootique-logback-version>
+		<bootique-jersey-version>0.19</bootique-jersey-version>
 
 		<jersey-version>2.21</jersey-version>
 	</properties>
