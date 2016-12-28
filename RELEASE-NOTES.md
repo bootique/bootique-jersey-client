@@ -1,3 +1,7 @@
+## 0.8
+
+* #17 Bootique 0.21 and annotated config help
+
 ## 0.7
 
 * #15 Support for configuring trust channel

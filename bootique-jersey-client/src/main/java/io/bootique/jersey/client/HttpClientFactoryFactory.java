@@ -1,6 +1,8 @@
 package io.bootique.jersey.client;
 
 import com.google.inject.Injector;
+import io.bootique.annotation.BQConfig;
+import io.bootique.annotation.BQConfigProperty;
 import io.bootique.jersey.client.auth.AuthenticatorFactory;
 import io.bootique.jersey.client.log.JULSlf4jLogger;
 import io.bootique.resource.ResourceFactory;
@@ -27,6 +29,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+@BQConfig("Configures HttpClientFactory, including named authenticators, timeouts, SSL certificates, etc.")
 public class HttpClientFactoryFactory {
 
     boolean followRedirects;
@@ -49,6 +52,7 @@ public class HttpClientFactoryFactory {
      * @param trustStore a resource URL pointing to the location of truststore.
      * @since 0.7
      */
+    @BQConfigProperty
     public void setTrustStore(ResourceFactory trustStore) {
         this.trustStore = trustStore;
     }
@@ -58,6 +62,7 @@ public class HttpClientFactoryFactory {
      *
      * @param trustStorePassword trust store password.
      */
+    @BQConfigProperty
     public void setTrustStorePassword(String trustStorePassword) {
         this.trustStorePassword = Objects.requireNonNull(trustStorePassword);
     }
@@ -66,22 +71,27 @@ public class HttpClientFactoryFactory {
      * @param auth a map of AuthenticationFactory instances by symbolic name.
      * @since 0.2
      */
+    @BQConfigProperty
     public void setAuth(Map<String, AuthenticatorFactory> auth) {
         this.auth = auth;
     }
 
+    @BQConfigProperty
     public void setFollowRedirects(boolean followRedirects) {
         this.followRedirects = followRedirects;
     }
 
+    @BQConfigProperty
     public void setReadTimeoutMs(int readTimeoutMs) {
         this.readTimeoutMs = readTimeoutMs;
     }
 
+    @BQConfigProperty
     public void setConnectTimeoutMs(int connectTimeoutMs) {
         this.connectTimeoutMs = connectTimeoutMs;
     }
 
+    @BQConfigProperty
     public void setAsyncThreadPoolSize(int asyncThreadPoolSize) {
         this.asyncThreadPoolSize = asyncThreadPoolSize;
     }
@@ -92,6 +102,7 @@ public class HttpClientFactoryFactory {
      * @param compression whether compression should be requested.
      * @since 0.6
      */
+    @BQConfigProperty
     public void setCompression(boolean compression) {
         this.compression = compression;
     }
