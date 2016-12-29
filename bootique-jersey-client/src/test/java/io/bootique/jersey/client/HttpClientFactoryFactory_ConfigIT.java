@@ -4,12 +4,17 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
 import io.bootique.config.ConfigurationFactory;
+import io.bootique.config.PolymorphicConfiguration;
+import io.bootique.config.TypesFactory;
 import io.bootique.config.jackson.JsonNodeConfigurationFactory;
 import io.bootique.jackson.DefaultJacksonService;
+import io.bootique.jackson.ImmutableSubtypeResolver;
 import io.bootique.jackson.JacksonService;
 import io.bootique.jersey.client.auth.AuthenticatorFactory;
 import io.bootique.jersey.client.auth.BasicAuthenticatorFactory;
+import io.bootique.log.BootLogger;
 import io.bootique.log.DefaultBootLogger;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -20,10 +25,19 @@ import static org.junit.Assert.assertTrue;
 
 public class HttpClientFactoryFactory_ConfigIT {
 
+    private BootLogger bootLogger;
+    private TypesFactory<PolymorphicConfiguration> typesFactory;
+
+    @Before
+    public void before() {
+        bootLogger = new DefaultBootLogger(true);
+        typesFactory = new TypesFactory<>(getClass().getClassLoader(), PolymorphicConfiguration.class, bootLogger);
+    }
+
 	private ConfigurationFactory factory(String yaml) {
 
 		// not using a mock; making sure all Jackson extensions are loaded
-		JacksonService jacksonService = new DefaultJacksonService(new DefaultBootLogger(true));
+		JacksonService jacksonService = new DefaultJacksonService(new ImmutableSubtypeResolver(typesFactory.getTypes()), bootLogger);
 
 		YAMLParser parser;
 		try {
