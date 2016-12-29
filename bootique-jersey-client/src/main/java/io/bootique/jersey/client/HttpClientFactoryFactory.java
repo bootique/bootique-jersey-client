@@ -52,7 +52,8 @@ public class HttpClientFactoryFactory {
      * @param trustStore a resource URL pointing to the location of truststore.
      * @since 0.7
      */
-    @BQConfigProperty
+    @BQConfigProperty("Optional resource URL specifying the location of the trust store that keeps SSL certificates" +
+            " for the known servers.")
     public void setTrustStore(ResourceFactory trustStore) {
         this.trustStore = trustStore;
     }
@@ -62,7 +63,8 @@ public class HttpClientFactoryFactory {
      *
      * @param trustStorePassword trust store password.
      */
-    @BQConfigProperty
+    @BQConfigProperty("Password for the store specified via 'trustStore' property. In the best Java tradition, " +
+            "the default is 'changeit'.")
     public void setTrustStorePassword(String trustStorePassword) {
         this.trustStorePassword = Objects.requireNonNull(trustStorePassword);
     }
