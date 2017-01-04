@@ -1,22 +1,24 @@
 package io.bootique.jersey.client.auth;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.google.inject.Injector;
+import io.bootique.annotation.BQConfig;
+import io.bootique.annotation.BQConfigProperty;
 
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.xml.bind.DatatypeConverter;
-
-import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.google.inject.Injector;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.Objects;
 
 /**
  * @since 0.2
  */
 @JsonTypeName("basic")
+@BQConfig
 public class BasicAuthenticatorFactory implements AuthenticatorFactory {
 
 	private String username;
@@ -26,6 +28,7 @@ public class BasicAuthenticatorFactory implements AuthenticatorFactory {
 		return username;
 	}
 
+	@BQConfigProperty
 	public void setUsername(String username) {
 		this.username = username;
 	}
@@ -34,6 +37,7 @@ public class BasicAuthenticatorFactory implements AuthenticatorFactory {
 		return password;
 	}
 
+    @BQConfigProperty
 	public void setPassword(String password) {
 		this.password = password;
 	}

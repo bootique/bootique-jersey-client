@@ -1,6 +1,7 @@
 package io.bootique.jersey.client;
 
 import com.google.inject.Module;
+import io.bootique.BQModule;
 import io.bootique.BQModuleProvider;
 
 import java.util.Collections;
@@ -18,5 +19,12 @@ public class JerseyClientModuleProvider implements BQModuleProvider {
         // TODO: config prefix is hardcoded. Refactor away from ConfigModule, and make provider
         // generate config prefix, reusing it in metadata...
         return Collections.singletonMap("jerseyclient", HttpClientFactoryFactory.class);
+    }
+
+    @Override
+    public BQModule.Builder moduleBuilder() {
+        return BQModuleProvider.super
+                .moduleBuilder()
+                .description("Provides JAX-RS HTTP client.");
     }
 }

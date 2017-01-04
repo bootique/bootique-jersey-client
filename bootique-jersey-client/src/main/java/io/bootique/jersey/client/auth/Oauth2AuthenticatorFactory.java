@@ -1,7 +1,14 @@
 package io.bootique.jersey.client.auth;
 
-import java.io.IOException;
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.google.inject.Injector;
+import io.bootique.annotation.BQConfig;
+import io.bootique.annotation.BQConfigProperty;
+import io.bootique.jersey.client.auth.BasicAuthenticatorFactory.BasicAuthenticator;
+import org.glassfish.jersey.jackson.JacksonFeature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.ClientRequestContext;
@@ -13,20 +20,14 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.annotation.XmlAttribute;
-
-import org.glassfish.jersey.jackson.JacksonFeature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.google.inject.Injector;
-import io.bootique.jersey.client.auth.BasicAuthenticatorFactory.BasicAuthenticator;
+import java.io.IOException;
+import java.util.Objects;
 
 /**
  * @since 0.3
  */
 @JsonTypeName("oauth2")
+@BQConfig
 public class Oauth2AuthenticatorFactory implements AuthenticatorFactory {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Oauth2AuthenticatorFactory.class);
@@ -39,6 +40,7 @@ public class Oauth2AuthenticatorFactory implements AuthenticatorFactory {
 		return username;
 	}
 
+	@BQConfigProperty
 	public void setUsername(String username) {
 		this.username = username;
 	}
@@ -47,6 +49,7 @@ public class Oauth2AuthenticatorFactory implements AuthenticatorFactory {
 		return password;
 	}
 
+	@BQConfigProperty
 	public void setPassword(String password) {
 		this.password = password;
 	}
@@ -55,6 +58,7 @@ public class Oauth2AuthenticatorFactory implements AuthenticatorFactory {
 		return tokenUrl;
 	}
 
+	@BQConfigProperty
 	public void setTokenUrl(String tokenUrl) {
 		this.tokenUrl = tokenUrl;
 	}
