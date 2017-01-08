@@ -18,7 +18,7 @@ import java.util.Objects;
  * @since 0.2
  */
 @JsonTypeName("basic")
-@BQConfig
+@BQConfig("Authenticator for BASIC auth protocol.")
 public class BasicAuthenticatorFactory implements AuthenticatorFactory {
 
 	private String username;
@@ -28,7 +28,7 @@ public class BasicAuthenticatorFactory implements AuthenticatorFactory {
 		return username;
 	}
 
-	@BQConfigProperty
+	@BQConfigProperty("A user name of the BASIC auth credentials used to access the remote resource.")
 	public void setUsername(String username) {
 		this.username = username;
 	}
@@ -37,7 +37,7 @@ public class BasicAuthenticatorFactory implements AuthenticatorFactory {
 		return password;
 	}
 
-    @BQConfigProperty
+	@BQConfigProperty("A password of the BASIC auth credentials used to access the remote resource.")
 	public void setPassword(String password) {
 		this.password = password;
 	}

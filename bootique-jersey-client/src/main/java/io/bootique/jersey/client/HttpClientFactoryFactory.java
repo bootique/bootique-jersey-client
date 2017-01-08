@@ -73,7 +73,7 @@ public class HttpClientFactoryFactory {
      * @param auth a map of AuthenticationFactory instances by symbolic name.
      * @since 0.2
      */
-    @BQConfigProperty
+    @BQConfigProperty("A map of named \"authenticators\" for HTTP services that require authentication.")
     public void setAuth(Map<String, AuthenticatorFactory> auth) {
         this.auth = auth;
     }

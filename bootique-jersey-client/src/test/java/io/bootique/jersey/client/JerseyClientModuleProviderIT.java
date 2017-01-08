@@ -5,8 +5,13 @@ import org.junit.Test;
 
 public class JerseyClientModuleProviderIT {
 
-	@Test
-	public void testPresentInJar() {
-		BQModuleProviderChecker.testPresentInJar(JerseyClientModuleProvider.class);
-	}
+    @Test
+    public void testPresentInJar() {
+        BQModuleProviderChecker.testPresentInJar(JerseyClientModuleProvider.class);
+    }
+
+    @Test
+    public void testMetadata() {
+        BQModuleProviderChecker.testMetadata(JerseyClientModuleProvider.class);
+    }
 }

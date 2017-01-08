@@ -12,7 +12,7 @@ import javax.ws.rs.core.Configuration;
  * @since 0.2
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
-@BQConfig
+@BQConfig("Authenticator for a given auth protocol.")
 public interface AuthenticatorFactory extends PolymorphicConfiguration {
 
 	ClientRequestFilter createAuthFilter(Configuration clientConfig, Injector injector);

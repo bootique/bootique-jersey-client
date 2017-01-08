@@ -27,7 +27,8 @@ import java.util.Objects;
  * @since 0.3
  */
 @JsonTypeName("oauth2")
-@BQConfig
+@BQConfig("Authenticator for Oauth2 protocol. Includes URL of the OAuth token endpoint and " +
+		"username/password that are exchanged for the token.")
 public class Oauth2AuthenticatorFactory implements AuthenticatorFactory {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Oauth2AuthenticatorFactory.class);
@@ -40,7 +41,7 @@ public class Oauth2AuthenticatorFactory implements AuthenticatorFactory {
 		return username;
 	}
 
-	@BQConfigProperty
+	@BQConfigProperty("Login username. A part of the application credentials to obtain oauth token.")
 	public void setUsername(String username) {
 		this.username = username;
 	}
@@ -49,7 +50,7 @@ public class Oauth2AuthenticatorFactory implements AuthenticatorFactory {
 		return password;
 	}
 
-	@BQConfigProperty
+	@BQConfigProperty("Password. A part of the application credentials to obtain oauth token.")
 	public void setPassword(String password) {
 		this.password = password;
 	}
@@ -58,7 +59,7 @@ public class Oauth2AuthenticatorFactory implements AuthenticatorFactory {
 		return tokenUrl;
 	}
 
-	@BQConfigProperty
+	@BQConfigProperty("A URL of the OAuth2 Token API endpoint.")
 	public void setTokenUrl(String tokenUrl) {
 		this.tokenUrl = tokenUrl;
 	}
