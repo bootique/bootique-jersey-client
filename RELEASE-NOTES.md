@@ -1,3 +1,7 @@
+## 0.9
+
+* #18 Upgrade to bootique 0.22 , replace contribute API with "extend"
+
 ## 0.8
 
 * #17 Bootique 0.21 and annotated config help
