@@ -55,11 +55,7 @@ public class CustomFeaturesIT {
 
     @Before
     public void before() {
-        Module module = binder -> {
-            JerseyClientModule.contributeFeatures(binder).addBinding().to(Feature1.class);
-            JerseyClientModule.contributeFeatures(binder).addBinding().to(Feature2.class);
-        };
-
+        Module module = binder -> JerseyClientModule.extend(binder).addFeature(Feature1.class).addFeature(Feature2.class);
         this.app = CLIENT_FACTORY.app().module(JerseyClientModule.class).module(module).createRuntime();
     }
 

@@ -13,27 +13,40 @@ import java.util.Set;
 
 public class JerseyClientModule extends ConfigModule {
 
-	/**
-	 * @param binder
-	 *            DI binder passed to the Module that invokes this method.
-	 * @since 0.3
-	 * @return returns a {@link Multibinder} for client-side JAX-RS Features.
-	 */
-	public static Multibinder<Feature> contributeFeatures(Binder binder) {
-		return Multibinder.newSetBinder(binder, Feature.class, JerseyClientFeatures.class);
-	}
+    /**
+     * Returns an instance of {@link JerseyClientModuleExtender} used by downstream modules to load custom extensions of
+     * services declared in the JerseyClientModule. Should be invoked from a downstream Module's "configure" method.
+     *
+     * @param binder DI binder passed to the Module that invokes this method.
+     * @return an instance of {@link JerseyClientModuleExtender} that can be used to load JerseyClientModule extensions.
+     * @since 0.9
+     */
+    public static JerseyClientModuleExtender extend(Binder binder) {
+        return new JerseyClientModuleExtender(binder);
+    }
 
-	@Override
-	public void configure(Binder binder) {
-		// trigger extension points creation and provide default contributions
-		JerseyClientModule.contributeFeatures(binder);
-	}
+    /**
+     * @param binder DI binder passed to the Module that invokes this method.
+     * @return returns a {@link Multibinder} for client-side JAX-RS Features.
+     * @since 0.3
+     * @deprecated since 0.21 call {@link #extend(Binder)} and then call
+     * {@link JerseyClientModuleExtender#addFeature(Feature)}.
+     */
+    @Deprecated
+    public static Multibinder<Feature> contributeFeatures(Binder binder) {
+        return Multibinder.newSetBinder(binder, Feature.class, JerseyClientFeatures.class);
+    }
 
-	@Provides
-	@Singleton
-	HttpClientFactory createClientFactory(ConfigurationFactory configurationFactory, Injector injector,
-										  @JerseyClientFeatures Set<Feature> features) {
-		return configurationFactory.config(HttpClientFactoryFactory.class, configPrefix).createClientFactory(injector,
-				features);
-	}
+    @Override
+    public void configure(Binder binder) {
+        extend(binder).initAllExtensions();
+    }
+
+    @Provides
+    @Singleton
+    HttpClientFactory createClientFactory(ConfigurationFactory configurationFactory, Injector injector,
+                                          @JerseyClientFeatures Set<Feature> features) {
+        return configurationFactory.config(HttpClientFactoryFactory.class, configPrefix).createClientFactory(injector,
+                features);
+    }
 }

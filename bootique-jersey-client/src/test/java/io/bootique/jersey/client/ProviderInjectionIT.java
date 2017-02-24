@@ -71,7 +71,7 @@ public class ProviderInjectionIT {
     public void before() {
 
         Module module = binder -> {
-            JerseyClientModule.contributeFeatures(binder).addBinding().to(TestResponseReaderFeature.class);
+            JerseyClientModule.extend(binder).addFeature(TestResponseReaderFeature.class);
             binder.bind(InjectedService.class);
         };
 

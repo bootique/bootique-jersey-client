@@ -1,18 +1,16 @@
 package io.bootique.jersey.client.instrumented;
 
-import java.io.IOException;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.client.ClientResponseContext;
 import javax.ws.rs.client.ClientResponseFilter;
 import javax.ws.rs.ext.Provider;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.Timer;
+import java.io.IOException;
 
 @Provider
 public class ClientTimingFilter implements ClientRequestFilter, ClientResponseFilter {
@@ -23,8 +21,7 @@ public class ClientTimingFilter implements ClientRequestFilter, ClientResponseFi
 	private Timer requestTimer;
 
 	public ClientTimingFilter(MetricRegistry metricRegistry) {
-		this.requestTimer = metricRegistry
-				.timer(MetricRegistry.name(InstrumentedClientRequestFeature.class, "client-request-timer"));
+		this.requestTimer = metricRegistry.timer(MetricRegistry.name(InstrumentedFeature.class, "client-request-timer"));
 	}
 
 	@Override
