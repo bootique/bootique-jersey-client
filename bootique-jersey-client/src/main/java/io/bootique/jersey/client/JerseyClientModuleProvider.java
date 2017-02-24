@@ -26,6 +26,6 @@ public class JerseyClientModuleProvider implements BQModuleProvider {
     public BQModule.Builder moduleBuilder() {
         return BQModuleProvider.super
                 .moduleBuilder()
-                .description("Provides JAX-RS HTTP client.");
+                .description("Provides configurable JAX-RS HTTP client with pluggable authentication.");
     }
 }
