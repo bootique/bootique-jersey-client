@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.bootique.modules.parent</groupId>
@@ -10,7 +9,7 @@
 
     <groupId>io.bootique.jersey.client</groupId>
     <artifactId>bootique-jersey-client-parent</artifactId>
-    <version>0.9-SNAPSHOT</version>
+    <version>0.9</version>
     <packaging>pom</packaging>
 
     <name>bootique-jersey-client-parent: Parent of HTTP client integrated with Bootique, built on top of Jersey.</name>
@@ -37,7 +36,7 @@
     <scm>
         <developerConnection>scm:git:ssh://git@github.com/bootique/bootique-jersey-client</developerConnection>
         <url>https://github.com/bootique/bootique-jersey-client</url>
-        <tag>HEAD</tag>
+        <tag>bootique-jersey-client-parent-0.9</tag>
     </scm>
 
     <distributionManagement>
