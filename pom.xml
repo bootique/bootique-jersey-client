@@ -24,10 +24,10 @@
     </modules>
 
     <properties>
-        <bootique-version>0.22-SNAPSHOT</bootique-version>
-        <bootique-metrics-version>0.9-SNAPSHOT</bootique-metrics-version>
-        <bootique-logback-version>0.14-SNAPSHOT</bootique-logback-version>
-        <bootique-jersey-version>0.21-SNAPSHOT</bootique-jersey-version>
+        <bootique-version>0.22</bootique-version>
+        <bootique-metrics-version>0.9</bootique-metrics-version>
+        <bootique-logback-version>0.14</bootique-logback-version>
+        <bootique-jersey-version>0.21</bootique-jersey-version>
 
         <jersey-version>2.21</jersey-version>
         <!-- Must be coordinated with Jersey version. managing manually due to SLF4J version conflict -->
