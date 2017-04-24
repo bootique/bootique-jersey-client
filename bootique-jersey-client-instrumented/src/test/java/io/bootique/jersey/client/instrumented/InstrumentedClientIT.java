@@ -47,7 +47,7 @@ public class InstrumentedClientIT {
     @BeforeClass
     public static void beforeClass() throws InterruptedException {
 
-        Module jersey = binder -> JerseyModule.contributeResources(binder).addBinding().to(Resource.class);
+        Module jersey = binder -> JerseyModule.extend(binder).addResource(Resource.class);
         Function<BQDaemonTestRuntime, Boolean> startupCheck = r -> r.getRuntime().getInstance(Server.class).isStarted();
 
         SERVER_APP = SERVER_APP_FACTORY.app("--server")

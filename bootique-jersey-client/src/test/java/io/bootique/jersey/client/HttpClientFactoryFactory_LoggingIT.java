@@ -44,13 +44,14 @@ public class HttpClientFactoryFactory_LoggingIT {
     private void startApp(String config) {
 
         Module extensions = (binder) -> {
-            JerseyModule.contributeResources(binder).addBinding().to(Resource.class);
+            JerseyModule.extend(binder).addResource(Resource.class);
 
             // TODO: this test is seriously dirty.. we don't start the client from Bootique,
             // yet we reuse Bootique Logback configuration for client logging.
             // so here we are turning off logging from the server....
-            BQCoreModule.contributeLogLevels(binder).addBinding("org.eclipse.jetty.server").toInstance(Level.OFF);
-            BQCoreModule.contributeLogLevels(binder).addBinding("org.eclipse.jetty.util").toInstance(Level.OFF);
+            BQCoreModule.extend(binder)
+                    .setLogLevel("org.eclipse.jetty.server", Level.OFF)
+                    .setLogLevel("org.eclipse.jetty.util", Level.OFF);
         };
 
         Function<BQDaemonTestRuntime, Boolean> startupCheck = r -> r.getRuntime().getInstance(Server.class).isStarted();
