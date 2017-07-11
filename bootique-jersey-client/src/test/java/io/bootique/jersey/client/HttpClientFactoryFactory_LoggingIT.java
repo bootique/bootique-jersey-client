@@ -3,10 +3,10 @@ package io.bootique.jersey.client;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import io.bootique.BQCoreModule;
+import io.bootique.BQRuntime;
 import io.bootique.jersey.JerseyModule;
 import io.bootique.jetty.JettyModule;
 import io.bootique.logback.LogbackModule;
-import io.bootique.test.BQDaemonTestRuntime;
 import io.bootique.test.junit.BQDaemonTestFactory;
 import org.eclipse.jetty.server.Server;
 import org.junit.Before;
@@ -54,7 +54,7 @@ public class HttpClientFactoryFactory_LoggingIT {
                     .setLogLevel("org.eclipse.jetty.util", Level.OFF);
         };
 
-        Function<BQDaemonTestRuntime, Boolean> startupCheck = r -> r.getRuntime().getInstance(Server.class).isStarted();
+        Function<BQRuntime, Boolean> startupCheck = r -> r.getInstance(Server.class).isStarted();
 
         serverFactory.app("--server", "--config=src/test/resources/io/bootique/jersey/client/" + config)
                 .modules(JettyModule.class, JerseyModule.class, LogbackModule.class)

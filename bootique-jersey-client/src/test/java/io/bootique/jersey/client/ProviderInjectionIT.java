@@ -2,10 +2,9 @@ package io.bootique.jersey.client;
 
 import com.google.inject.Inject;
 import com.google.inject.Module;
+import io.bootique.BQRuntime;
 import io.bootique.jersey.JerseyModule;
 import io.bootique.jetty.JettyModule;
-import io.bootique.test.BQDaemonTestRuntime;
-import io.bootique.test.BQTestRuntime;
 import io.bootique.test.junit.BQDaemonTestFactory;
 import io.bootique.test.junit.BQTestFactory;
 import org.eclipse.jetty.server.Server;
@@ -45,15 +44,15 @@ public class ProviderInjectionIT {
 
     @ClassRule
     public static BQDaemonTestFactory SERVER_APP_FACTORY = new BQDaemonTestFactory();
-    private static BQDaemonTestRuntime SERVER_APP;
+    private static BQRuntime SERVER_APP;
     @Rule
     public BQTestFactory CLIENT_FACTORY = new BQTestFactory();
-    private BQTestRuntime clientApp;
+    private BQRuntime clientApp;
 
     @BeforeClass
     public static void startJetty() {
         Module jersey = (binder) -> JerseyModule.extend(binder).addResource(Resource.class);
-        Function<BQDaemonTestRuntime, Boolean> startupCheck = r -> r.getRuntime().getInstance(Server.class).isStarted();
+        Function<BQRuntime, Boolean> startupCheck = r -> r.getInstance(Server.class).isStarted();
 
         SERVER_APP = SERVER_APP_FACTORY.app("--server")
                 .modules(JettyModule.class, JerseyModule.class)
@@ -64,7 +63,7 @@ public class ProviderInjectionIT {
 
     @AfterClass
     public static void stopJetty() {
-        SERVER_APP.stop();
+        SERVER_APP.shutdown();
     }
 
     @Before
@@ -81,7 +80,7 @@ public class ProviderInjectionIT {
     @Test
     public void testResponse() {
 
-        Client client = clientApp.getRuntime().getInstance(HttpClientFactory.class).newClient();
+        Client client = clientApp.getInstance(HttpClientFactory.class).newClient();
 
         WebTarget target = client.target("http://127.0.0.1:8080/");
 

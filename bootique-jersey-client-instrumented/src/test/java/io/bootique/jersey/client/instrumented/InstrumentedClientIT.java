@@ -3,13 +3,12 @@ package io.bootique.jersey.client.instrumented;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.google.inject.Module;
+import io.bootique.BQRuntime;
 import io.bootique.jersey.JerseyModule;
 import io.bootique.jersey.client.HttpClientFactory;
 import io.bootique.jersey.client.JerseyClientModule;
 import io.bootique.jetty.JettyModule;
 import io.bootique.metrics.MetricsModule;
-import io.bootique.test.BQDaemonTestRuntime;
-import io.bootique.test.BQTestRuntime;
 import io.bootique.test.junit.BQDaemonTestFactory;
 import io.bootique.test.junit.BQTestFactory;
 import org.eclipse.jetty.server.Server;
@@ -39,16 +38,16 @@ public class InstrumentedClientIT {
 
     @ClassRule
     public static BQDaemonTestFactory SERVER_APP_FACTORY = new BQDaemonTestFactory();
-    private static BQDaemonTestRuntime SERVER_APP;
+    private static BQRuntime SERVER_APP;
     @Rule
     public BQTestFactory CLIENT_FACTORY = new BQTestFactory();
-    private BQTestRuntime app;
+    private BQRuntime app;
 
     @BeforeClass
     public static void beforeClass() throws InterruptedException {
 
         Module jersey = binder -> JerseyModule.extend(binder).addResource(Resource.class);
-        Function<BQDaemonTestRuntime, Boolean> startupCheck = r -> r.getRuntime().getInstance(Server.class).isStarted();
+        Function<BQRuntime, Boolean> startupCheck = r -> r.getInstance(Server.class).isStarted();
 
         SERVER_APP = SERVER_APP_FACTORY.app("--server")
                 .modules(JettyModule.class, JerseyModule.class)
@@ -59,7 +58,7 @@ public class InstrumentedClientIT {
 
     @AfterClass
     public static void afterClass() throws InterruptedException {
-        SERVER_APP.stop();
+        SERVER_APP.shutdown();
     }
 
     @Before
@@ -72,15 +71,15 @@ public class InstrumentedClientIT {
 
     @After
     public void after() {
-        app.stop();
+        app.shutdown();
     }
 
     @Test
     public void testTimerInvoked() {
 
-        HttpClientFactory factory = app.getRuntime().getInstance(HttpClientFactory.class);
+        HttpClientFactory factory = app.getInstance(HttpClientFactory.class);
 
-        MetricRegistry metrics = app.getRuntime().getInstance(MetricRegistry.class);
+        MetricRegistry metrics = app.getInstance(MetricRegistry.class);
 
         Collection<Timer> timers = metrics.getTimers().values();
         assertEquals(1, timers.size());
@@ -97,9 +96,9 @@ public class InstrumentedClientIT {
     @Test
     public void testTimer_ConnectionError() {
 
-        Client client = app.getRuntime().getInstance(HttpClientFactory.class).newClient();
+        Client client = app.getInstance(HttpClientFactory.class).newClient();
 
-        MetricRegistry metrics = app.getRuntime().getInstance(MetricRegistry.class);
+        MetricRegistry metrics = app.getInstance(MetricRegistry.class);
 
         Collection<Timer> timers = metrics.getTimers().values();
         assertEquals(1, timers.size());
@@ -124,9 +123,9 @@ public class InstrumentedClientIT {
     @Test
     public void testTimer_ServerErrors() {
 
-        Client client = app.getRuntime().getInstance(HttpClientFactory.class).newClient();
+        Client client = app.getInstance(HttpClientFactory.class).newClient();
 
-        MetricRegistry metrics = app.getRuntime().getInstance(MetricRegistry.class);
+        MetricRegistry metrics = app.getInstance(MetricRegistry.class);
 
         Collection<Timer> timers = metrics.getTimers().values();
         assertEquals(1, timers.size());

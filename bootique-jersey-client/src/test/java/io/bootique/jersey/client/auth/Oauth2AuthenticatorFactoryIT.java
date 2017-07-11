@@ -1,9 +1,9 @@
 package io.bootique.jersey.client.auth;
 
 import com.google.inject.Module;
+import io.bootique.BQRuntime;
 import io.bootique.jersey.JerseyModule;
 import io.bootique.jetty.JettyModule;
-import io.bootique.test.BQDaemonTestRuntime;
 import io.bootique.test.junit.BQDaemonTestFactory;
 import org.eclipse.jetty.server.Server;
 import org.glassfish.jersey.client.ClientConfig;
@@ -30,13 +30,13 @@ public class Oauth2AuthenticatorFactoryIT {
     @ClassRule
     public static BQDaemonTestFactory SERVER_APP_FACTORY = new BQDaemonTestFactory();
 
-    private static BQDaemonTestRuntime SERVER_APP;
+    private static BQRuntime SERVER_APP;
 
     @BeforeClass
     public static void beforeClass() throws InterruptedException {
 
         Module jersey = (binder) -> JerseyModule.extend(binder).addResource(TokenApi.class);
-        Function<BQDaemonTestRuntime, Boolean> startupCheck = r -> r.getRuntime().getInstance(Server.class).isStarted();
+        Function<BQRuntime, Boolean> startupCheck = r -> r.getInstance(Server.class).isStarted();
 
         SERVER_APP = SERVER_APP_FACTORY.app("--server")
                 .modules(JettyModule.class, JerseyModule.class)
@@ -47,7 +47,7 @@ public class Oauth2AuthenticatorFactoryIT {
 
     @AfterClass
     public static void after() throws InterruptedException {
-        SERVER_APP.stop();
+        SERVER_APP.shutdown();
     }
 
     @Test

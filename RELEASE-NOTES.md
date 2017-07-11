@@ -1,3 +1,7 @@
+## 0.10
+
+* #19 Upgrade to BQ 0.23 
+
 ## 0.9
 
 * #18 Upgrade to bootique 0.22 , replace contribute API with "extend"

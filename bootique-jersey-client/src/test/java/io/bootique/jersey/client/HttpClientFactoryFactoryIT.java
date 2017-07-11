@@ -2,11 +2,11 @@ package io.bootique.jersey.client;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import io.bootique.BQRuntime;
 import io.bootique.jersey.JerseyModule;
 import io.bootique.jersey.client.auth.AuthenticatorFactory;
 import io.bootique.jersey.client.auth.BasicAuthenticatorFactory;
 import io.bootique.jetty.JettyModule;
-import io.bootique.test.BQDaemonTestRuntime;
 import io.bootique.test.junit.BQDaemonTestFactory;
 import org.eclipse.jetty.server.Server;
 import org.junit.AfterClass;
@@ -40,13 +40,13 @@ public class HttpClientFactoryFactoryIT {
     @ClassRule
     public static BQDaemonTestFactory SERVER_APP_FACTORY = new BQDaemonTestFactory();
 
-    private static BQDaemonTestRuntime SERVER_APP;
+    private static BQRuntime SERVER_APP;
     private Injector mockInjector;
 
     @BeforeClass
     public static void beforeClass() {
         Module jersey = (binder) -> JerseyModule.extend(binder).addResource(Resource.class);
-        Function<BQDaemonTestRuntime, Boolean> startupCheck = r -> r.getRuntime().getInstance(Server.class).isStarted();
+        Function<BQRuntime, Boolean> startupCheck = r -> r.getInstance(Server.class).isStarted();
 
         SERVER_APP = SERVER_APP_FACTORY.app("--server")
                 .modules(JettyModule.class, JerseyModule.class)
@@ -57,7 +57,7 @@ public class HttpClientFactoryFactoryIT {
 
     @AfterClass
     public static void after() {
-        SERVER_APP.stop();
+        SERVER_APP.shutdown();
     }
 
     @Before
