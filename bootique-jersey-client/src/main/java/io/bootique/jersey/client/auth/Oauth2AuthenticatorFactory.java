@@ -30,9 +30,9 @@ public class Oauth2AuthenticatorFactory implements AuthenticatorFactory {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Oauth2AuthenticatorFactory.class);
 
-	private String tokenUrl;
-	private String username;
-	private String password;
+	protected String tokenUrl;
+	protected String username;
+	protected String password;
 
 	public String getUsername() {
 		return username;
@@ -73,12 +73,7 @@ public class Oauth2AuthenticatorFactory implements AuthenticatorFactory {
 
 		LOGGER.info("reading OAuth2 token from " + tokenUrl);
 
-		BasicAuthenticator tokenAuth = new BasicAuthenticator(username, password);
-
-		Entity<String> postEntity = Entity.entity("grant_type=client_credentials",
-				MediaType.APPLICATION_FORM_URLENCODED_TYPE);
-		Response tokenResponse = ClientBuilder.newClient(configuration).register(tokenAuth)
-				.register(JacksonFeature.class).target(tokenUrl).request().post(postEntity);
+		Response tokenResponse = requestToken(configuration);
 
 		try {
 			String token = readToken(tokenResponse);
@@ -89,7 +84,16 @@ public class Oauth2AuthenticatorFactory implements AuthenticatorFactory {
 		}
 	}
 
-	private String readToken(Response response) {
+	protected Response requestToken(Configuration configuration) {
+		BasicAuthenticator tokenAuth = new BasicAuthenticator(username, password);
+
+		Entity<String> postEntity = Entity.entity("grant_type=client_credentials",
+				MediaType.APPLICATION_FORM_URLENCODED_TYPE);
+		return ClientBuilder.newClient(configuration).register(tokenAuth)
+				.register(JacksonFeature.class).target(tokenUrl).request().post(postEntity);
+	}
+
+	protected String readToken(Response response) {
 
 		if (response.getStatus() != Status.OK.getStatusCode()) {
 			String json = response.readEntity(String.class);
