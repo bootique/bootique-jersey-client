@@ -1,3 +1,7 @@
+## 0.24
+
+* #20 Oauth2AuthenticatorFactory should not get token on startup
+
 ## 0.10
 
 * #19 Upgrade to BQ 0.23 
