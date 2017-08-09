@@ -89,7 +89,6 @@ public class Oauth2AuthenticatorFactory implements AuthenticatorFactory {
         Entity<String> postEntity = Entity.entity("grant_type=client_credentials",
                 MediaType.APPLICATION_FORM_URLENCODED_TYPE);
 
-        // do not reuse client con
         return ClientBuilder
                 .newClient()
                 .register(JacksonFeature.class)
