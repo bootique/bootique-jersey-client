@@ -1,6 +1,7 @@
 ## 0.24
 
 * #20 Oauth2AuthenticatorFactory should not get token on startup
+* #22 StackOverflowError in Oauth2AuthenticatorFactory or we should not reuse Configuration in AuthenticatorFactory
 
 ## 0.10
 

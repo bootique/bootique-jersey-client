@@ -6,7 +6,6 @@ import io.bootique.annotation.BQConfig;
 import io.bootique.config.PolymorphicConfiguration;
 
 import javax.ws.rs.client.ClientRequestFilter;
-import javax.ws.rs.core.Configuration;
 
 /**
  * @since 0.2
@@ -15,5 +14,10 @@ import javax.ws.rs.core.Configuration;
 @BQConfig("Authenticator for a given auth protocol.")
 public interface AuthenticatorFactory extends PolymorphicConfiguration {
 
-	ClientRequestFilter createAuthFilter(Configuration clientConfig, Injector injector);
+    /**
+     * @param injector DI injector that can be used to lookup extra services required by the factory.
+     * @return
+     * @since 0.24
+     */
+    ClientRequestFilter createAuthFilter(Injector injector);
 }

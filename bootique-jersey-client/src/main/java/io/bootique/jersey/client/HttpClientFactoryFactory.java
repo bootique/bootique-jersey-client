@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.ClientRequestFilter;
-import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Feature;
 import java.io.IOException;
 import java.io.InputStream;
@@ -118,7 +117,7 @@ public class HttpClientFactoryFactory {
 
         KeyStore trustStore = createTrustStore();
 
-        return new DefaultHttpClientFactory(config, trustStore, createAuthFilters(config, injector));
+        return new DefaultHttpClientFactory(config, trustStore, createAuthFilters(injector));
     }
 
     protected KeyStore createTrustStore() {
@@ -139,11 +138,11 @@ public class HttpClientFactoryFactory {
         return trustStore;
     }
 
-    protected Map<String, ClientRequestFilter> createAuthFilters(Configuration clientConfig, Injector injector) {
+    protected Map<String, ClientRequestFilter> createAuthFilters(Injector injector) {
         Map<String, ClientRequestFilter> filters = new HashMap<>();
 
         if (auth != null) {
-            auth.forEach((k, v) -> filters.put(k, v.createAuthFilter(clientConfig, injector)));
+            auth.forEach((k, v) -> filters.put(k, v.createAuthFilter(injector)));
         }
 
         return filters;

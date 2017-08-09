@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -62,13 +61,13 @@ public class Oauth2AuthenticatorFactory implements AuthenticatorFactory {
     }
 
     @Override
-    public ClientRequestFilter createAuthFilter(Configuration clientConfig, Injector injector) {
-        return new OAuth2TokenAuthenticator(() -> getToken(clientConfig));
+    public ClientRequestFilter createAuthFilter(Injector injector) {
+        return new OAuth2TokenAuthenticator(() -> getToken());
     }
 
-    protected String getToken(Configuration configuration) {
-        
-        Response tokenResponse = requestToken(configuration);
+    protected String getToken() {
+
+        Response tokenResponse = requestToken();
 
         try {
             String token = readToken(tokenResponse);
@@ -79,19 +78,26 @@ public class Oauth2AuthenticatorFactory implements AuthenticatorFactory {
         }
     }
 
-    protected Response requestToken(Configuration configuration) {
+    protected Response requestToken() {
 
         Objects.requireNonNull(username);
         Objects.requireNonNull(password);
         Objects.requireNonNull(tokenUrl);
 
         LOGGER.info("reading OAuth2 token from " + tokenUrl);
-        BasicAuthenticator tokenAuth = new BasicAuthenticator(username, password);
 
         Entity<String> postEntity = Entity.entity("grant_type=client_credentials",
                 MediaType.APPLICATION_FORM_URLENCODED_TYPE);
-        return ClientBuilder.newClient(configuration).register(tokenAuth)
-                .register(JacksonFeature.class).target(tokenUrl).request().post(postEntity);
+
+        // do not reuse client con
+        return ClientBuilder
+                .newClient()
+                .register(JacksonFeature.class)
+                .target(tokenUrl)
+                .request()
+                .header("Authorization", BasicAuthenticator.createBasicAuth(username, password))
+                .post(postEntity);
+
     }
 
     protected String readToken(Response response) {

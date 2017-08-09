@@ -3,7 +3,6 @@ package io.bootique.jersey.client.auth;
 import com.google.inject.Injector;
 import io.bootique.jersey.JerseyModule;
 import io.bootique.jetty.test.junit.JettyTestFactory;
-import org.glassfish.jersey.client.ClientConfig;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -46,8 +45,7 @@ public class Oauth2AuthenticatorFactoryIT {
         factory.setUsername("u");
         factory.setTokenUrl("http://127.0.0.1:8080/token");
 
-        ClientConfig config = new ClientConfig();
-        assertEquals("t:client_credentials:Basic dTpw", factory.getToken(config));
+        assertEquals("t:client_credentials:Basic dTpw", factory.getToken());
     }
 
     @Test(expected = RuntimeException.class)
@@ -58,8 +56,7 @@ public class Oauth2AuthenticatorFactoryIT {
         factory.setUsername("u");
         factory.setTokenUrl("http://127.0.0.1:8080/token_error");
 
-        ClientConfig config = new ClientConfig();
-        factory.getToken(config);
+        factory.getToken();
     }
 
     @Test
@@ -70,7 +67,7 @@ public class Oauth2AuthenticatorFactoryIT {
         factory.setUsername("u");
         factory.setTokenUrl("http://127.0.0.1:8080/token");
 
-        ClientRequestFilter filter = factory.createAuthFilter(new ClientConfig(), mock(Injector.class));
+        ClientRequestFilter filter = factory.createAuthFilter(mock(Injector.class));
 
         Response r1 = ClientBuilder
                 .newClient()
