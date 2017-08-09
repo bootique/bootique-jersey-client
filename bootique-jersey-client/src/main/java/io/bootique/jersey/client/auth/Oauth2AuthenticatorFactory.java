@@ -11,16 +11,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.annotation.XmlAttribute;
-import java.io.IOException;
 import java.util.Objects;
 
 /**
@@ -66,7 +63,7 @@ public class Oauth2AuthenticatorFactory implements AuthenticatorFactory {
 
 	@Override
 	public ClientRequestFilter createAuthFilter(Configuration clientConfig, Injector injector) {
-		return new TokenAuthenticator(getToken(clientConfig));
+		return new OAuth2TokenAuthenticator(() -> getToken(clientConfig));
 	}
 
 	protected String getToken(Configuration configuration) {
@@ -102,25 +99,6 @@ public class Oauth2AuthenticatorFactory implements AuthenticatorFactory {
 
 		Token token = response.readEntity(Token.class);
 		return Objects.requireNonNull(token).getAccessToken();
-	}
-
-	static class TokenAuthenticator implements ClientRequestFilter {
-
-		private String authorization;
-
-		public TokenAuthenticator(String token) {
-			this.authorization = createTokenAuth(token);
-		}
-
-		public void filter(ClientRequestContext requestContext) throws IOException {
-			MultivaluedMap<String, Object> headers = requestContext.getHeaders();
-			headers.add("Authorization", authorization);
-		}
-
-		static String createTokenAuth(String token) {
-			return "Bearer " + token;
-		}
-
 	}
 
 	@JsonIgnoreProperties(ignoreUnknown = true)

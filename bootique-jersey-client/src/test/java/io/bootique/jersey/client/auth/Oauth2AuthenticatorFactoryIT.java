@@ -87,17 +87,25 @@ public class Oauth2AuthenticatorFactoryIT {
         factory.setUsername("u");
         factory.setTokenUrl("http://127.0.0.1:8080/token");
 
-
         ClientRequestFilter filter = factory.createAuthFilter(new ClientConfig(), mock(Injector.class));
 
-        Response response = ClientBuilder
+        Response r1 = ClientBuilder
                 .newClient()
                 .register(filter)
                 .target("http://127.0.0.1:8080/require_token")
                 .request()
                 .get();
 
-        assertEquals(200, response.getStatus());
+        assertEquals(200, r1.getStatus());
+
+        Response r2 = ClientBuilder
+                .newClient()
+                .register(filter)
+                .target("http://127.0.0.1:8080/require_token")
+                .request()
+                .get();
+
+        assertEquals(200, r2.getStatus());
     }
 
     @Path("/")
