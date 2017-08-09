@@ -1,14 +1,9 @@
 package io.bootique.jersey.client.auth;
 
 import com.google.inject.Injector;
-import com.google.inject.Module;
-import io.bootique.BQRuntime;
 import io.bootique.jersey.JerseyModule;
-import io.bootique.jetty.JettyModule;
-import io.bootique.test.junit.BQDaemonTestFactory;
-import org.eclipse.jetty.server.Server;
+import io.bootique.jetty.test.junit.JettyTestFactory;
 import org.glassfish.jersey.client.ClientConfig;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -25,7 +20,6 @@ import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -33,26 +27,15 @@ import static org.mockito.Mockito.mock;
 public class Oauth2AuthenticatorFactoryIT {
 
     @ClassRule
-    public static BQDaemonTestFactory SERVER_APP_FACTORY = new BQDaemonTestFactory();
-
-    private static BQRuntime SERVER_APP;
+    public static JettyTestFactory SERVER_APP_FACTORY = new JettyTestFactory();
 
     @BeforeClass
-    public static void beforeClass() throws InterruptedException {
-
-        Module jersey = (binder) -> JerseyModule.extend(binder).addResource(TokenApi.class);
-        Function<BQRuntime, Boolean> startupCheck = r -> r.getInstance(Server.class).isStarted();
-
-        SERVER_APP = SERVER_APP_FACTORY.app("--server")
-                .modules(JettyModule.class, JerseyModule.class)
-                .module(jersey)
-                .startupCheck(startupCheck)
+    public static void beforeClass() {
+        SERVER_APP_FACTORY
+                .app()
+                .autoLoadModules()
+                .module((binder) -> JerseyModule.extend(binder).addResource(TokenApi.class))
                 .start();
-    }
-
-    @AfterClass
-    public static void after() throws InterruptedException {
-        SERVER_APP.shutdown();
     }
 
     @Test
