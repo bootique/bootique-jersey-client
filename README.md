@@ -13,7 +13,7 @@ Add the module to your Bootique app:
 
 ```xml
 <dependency>
-	<groupId>id.bootique.jersey.client</groupId>
+	<groupId>io.bootique.jersey.client</groupId>
 	<artifactId>bootique-jersey-client</artifactId>
 </dependency>
 ```
@@ -22,7 +22,7 @@ Or if you want to use metrics, add the instrumented flavor of the client instead
 
 ```xml
 <dependency>
-	<groupId>id.bootique.jersey.client</groupId>
+	<groupId>io.bootique.jersey.client</groupId>
 	<artifactId>bootique-jersey-client-instrumented</artifactId>
 </dependency>
 ```
