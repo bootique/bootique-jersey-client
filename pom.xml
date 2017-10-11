@@ -9,7 +9,7 @@
 
     <groupId>io.bootique.jersey.client</groupId>
     <artifactId>bootique-jersey-client-parent</artifactId>
-    <version>0.24-SNAPSHOT</version>
+    <version>0.24</version>
     <packaging>pom</packaging>
 
     <name>bootique-jersey-client-parent: Parent of HTTP client integrated with Bootique, built on top of Jersey.</name>
@@ -32,7 +32,7 @@
     <scm>
         <developerConnection>scm:git:ssh://git@github.com/bootique/bootique-jersey-client</developerConnection>
         <url>https://github.com/bootique/bootique-jersey-client</url>
-        <tag>HEAD</tag>
+        <tag>bootique-jersey-client-parent-0.24</tag>
     </scm>
 
     <distributionManagement>
