@@ -80,9 +80,9 @@ public class Oauth2AuthenticatorFactory implements AuthenticatorFactory {
 
     protected Response requestToken() {
 
-        Objects.requireNonNull(username);
-        Objects.requireNonNull(password);
-        Objects.requireNonNull(tokenUrl);
+        Objects.requireNonNull(username, "OAuth2 'username' is not specified");
+        Objects.requireNonNull(password, "OAuth2 'password' is not specified");
+        Objects.requireNonNull(tokenUrl, "OAuth2 'tokenUrl' is not specified");
 
         LOGGER.info("reading OAuth2 token from " + tokenUrl);
 
