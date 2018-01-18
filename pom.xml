@@ -94,6 +94,11 @@
                 <version>${bootique-version}</version>
             </dependency>
             <dependency>
+                <groupId>io.bootique.metrics</groupId>
+                <artifactId>bootique-metrics-healthchecks</artifactId>
+                <version>${bootique-version}</version>
+            </dependency>
+            <dependency>
                 <groupId>io.bootique.logback</groupId>
                 <artifactId>bootique-logback</artifactId>
                 <version>${bootique-version}</version>

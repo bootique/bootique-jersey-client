@@ -17,6 +17,24 @@
 	</description>
 
 	<dependencies>
+		<!-- Compile dependencies -->
+		<dependency>
+			<groupId>io.bootique.jersey.client</groupId>
+			<artifactId>bootique-jersey-client</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.bootique.metrics</groupId>
+			<artifactId>bootique-metrics</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.bootique.metrics</groupId>
+			<artifactId>bootique-metrics-healthchecks</artifactId>
+			<scope>compile</scope>
+		</dependency>
+
 		<!-- Unit test dependencies -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -42,19 +60,6 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-simple</artifactId>
 			<scope>test</scope>
-		</dependency>
-
-		<!-- Compile dependencies -->
-		<dependency>
-			<groupId>io.bootique.jersey.client</groupId>
-			<artifactId>bootique-jersey-client</artifactId>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.bootique.metrics</groupId>
-			<artifactId>bootique-metrics</artifactId>
-			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 

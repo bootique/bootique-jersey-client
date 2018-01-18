@@ -1,3 +1,7 @@
+## 0.25
+
+* #23 Ability to register healthchecks for remote web services #23
+
 ## 0.24
 
 * #20 Oauth2AuthenticatorFactory should not get token on startup
