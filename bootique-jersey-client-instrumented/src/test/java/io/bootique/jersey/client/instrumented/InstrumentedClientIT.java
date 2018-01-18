@@ -9,11 +9,8 @@ import io.bootique.jersey.client.HttpClientFactory;
 import io.bootique.jersey.client.JerseyClientModule;
 import io.bootique.jetty.JettyModule;
 import io.bootique.metrics.MetricsModule;
-import io.bootique.test.junit.BQDaemonTestFactory;
 import io.bootique.test.junit.BQTestFactory;
-import org.eclipse.jetty.server.Server;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -29,7 +26,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.util.Collection;
-import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -37,33 +33,26 @@ import static org.junit.Assert.fail;
 public class InstrumentedClientIT {
 
     @ClassRule
-    public static BQDaemonTestFactory SERVER_APP_FACTORY = new BQDaemonTestFactory();
-    private static BQRuntime SERVER_APP;
+    public static BQTestFactory SERVER_APP_FACTORY = new BQTestFactory();
+
     @Rule
-    public BQTestFactory CLIENT_FACTORY = new BQTestFactory();
+    public BQTestFactory clientFactory = new BQTestFactory();
     private BQRuntime app;
 
     @BeforeClass
-    public static void beforeClass() throws InterruptedException {
+    public static void beforeClass() {
 
         Module jersey = binder -> JerseyModule.extend(binder).addResource(Resource.class);
-        Function<BQRuntime, Boolean> startupCheck = r -> r.getInstance(Server.class).isStarted();
 
-        SERVER_APP = SERVER_APP_FACTORY.app("--server")
+        SERVER_APP_FACTORY.app("--server")
                 .modules(JettyModule.class, JerseyModule.class)
                 .module(jersey)
-                .startupCheck(startupCheck)
-                .start();
-    }
-
-    @AfterClass
-    public static void afterClass() throws InterruptedException {
-        SERVER_APP.shutdown();
+                .run();
     }
 
     @Before
     public void before() {
-        this.app = CLIENT_FACTORY
+        this.app = clientFactory
                 .app()
                 .modules(InstrumentedJerseyClientModule.class, JerseyClientModule.class, MetricsModule.class)
                 .createRuntime();
