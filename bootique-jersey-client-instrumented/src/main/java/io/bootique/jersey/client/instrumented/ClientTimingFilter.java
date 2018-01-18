@@ -10,7 +10,6 @@ import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.client.ClientResponseContext;
 import javax.ws.rs.client.ClientResponseFilter;
 import javax.ws.rs.ext.Provider;
-import java.io.IOException;
 
 @Provider
 public class ClientTimingFilter implements ClientRequestFilter, ClientResponseFilter {
@@ -25,7 +24,7 @@ public class ClientTimingFilter implements ClientRequestFilter, ClientResponseFi
 	}
 
 	@Override
-	public void filter(ClientRequestContext requestContext) throws IOException {
+	public void filter(ClientRequestContext requestContext) {
 		Timer.Context requestTimerContext = requestTimer.time();
 		requestContext.setProperty(TIMER_PROPERTY, requestTimerContext);
 
@@ -38,7 +37,7 @@ public class ClientTimingFilter implements ClientRequestFilter, ClientResponseFi
 	}
 
 	@Override
-	public void filter(ClientRequestContext requestContext, ClientResponseContext responseContext) throws IOException {
+	public void filter(ClientRequestContext requestContext, ClientResponseContext responseContext) {
 		Timer.Context requestTimerContext = (Timer.Context) requestContext.getProperty(TIMER_PROPERTY);
 
 		// TODO: this timing does not take into account reading response
