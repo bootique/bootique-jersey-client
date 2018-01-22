@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 
 public class OAuth2AuthenticatorFactoryIT {
@@ -45,7 +46,9 @@ public class OAuth2AuthenticatorFactoryIT {
         factory.setUsername("u");
         factory.setTokenUrl("http://127.0.0.1:8080/token");
 
-        assertEquals("t:client_credentials:Basic dTpw", factory.getToken());
+        OAuth2Token token = factory.createOAuth2TokenDAO().getToken();
+        assertNotNull(token);
+        assertEquals("t:client_credentials:Basic dTpw", token.getAccessToken());
     }
 
     @Test(expected = RuntimeException.class)
@@ -56,7 +59,7 @@ public class OAuth2AuthenticatorFactoryIT {
         factory.setUsername("u");
         factory.setTokenUrl("http://127.0.0.1:8080/token_error");
 
-        factory.getToken();
+        factory.createOAuth2TokenDAO().getToken();
     }
 
     @Test

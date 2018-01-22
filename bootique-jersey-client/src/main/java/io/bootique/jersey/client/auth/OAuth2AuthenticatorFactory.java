@@ -1,22 +1,12 @@
 package io.bootique.jersey.client.auth;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.inject.Injector;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
-import io.bootique.jersey.client.auth.BasicAuthenticatorFactory.BasicAuthenticator;
-import org.glassfish.jersey.jackson.JacksonFeature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.ClientRequestFilter;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.xml.bind.annotation.XmlAttribute;
+import java.time.Duration;
 import java.util.Objects;
 
 /**
@@ -27,11 +17,15 @@ import java.util.Objects;
         "username/password that are exchanged for the token.")
 public class OAuth2AuthenticatorFactory implements AuthenticatorFactory {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth2AuthenticatorFactory.class);
 
     protected String tokenUrl;
     protected String username;
     protected String password;
+    protected Duration expiresIn;
+
+    public OAuth2AuthenticatorFactory() {
+        this.expiresIn = Duration.ofHours(1);
+    }
 
     public String getUsername() {
         return username;
@@ -60,67 +54,24 @@ public class OAuth2AuthenticatorFactory implements AuthenticatorFactory {
         this.tokenUrl = tokenUrl;
     }
 
+    @BQConfigProperty("A duration value for default token expiration. Will only be used for oauth servers that do " +
+            "not send 'expires_in' attribute explicitly. If not set, this value is 1 hr.")
+    public void setExpiresIn(Duration expiresIn) {
+        this.expiresIn = expiresIn;
+    }
+
     @Override
     public ClientRequestFilter createAuthFilter(Injector injector) {
-        return new OAuth2TokenAuthenticator(() -> getToken());
+        OAuth2TokenDAO tokenDAO = createOAuth2TokenDAO();
+        return new OAuth2TokenAuthenticator(OAuth2Token.expiredToken(), tokenDAO);
     }
 
-    protected String getToken() {
-
-        Response tokenResponse = requestToken();
-
-        try {
-            String token = readToken(tokenResponse);
-            LOGGER.info("Successfully obtained OAuth2 token");
-            return token;
-        } finally {
-            tokenResponse.close();
-        }
-    }
-
-    protected Response requestToken() {
-
+    protected OAuth2TokenDAO createOAuth2TokenDAO() {
         Objects.requireNonNull(username, "OAuth2 'username' is not specified");
         Objects.requireNonNull(password, "OAuth2 'password' is not specified");
         Objects.requireNonNull(tokenUrl, "OAuth2 'tokenUrl' is not specified");
 
-        LOGGER.info("reading OAuth2 token from " + tokenUrl);
-
-        Entity<String> postEntity = Entity.entity("grant_type=client_credentials",
-                MediaType.APPLICATION_FORM_URLENCODED_TYPE);
-
-        return ClientBuilder
-                .newClient()
-                .register(JacksonFeature.class)
-                .target(tokenUrl)
-                .request()
-                .header("Authorization", BasicAuthenticator.createBasicAuth(username, password))
-                .post(postEntity);
-
+        return new OAuth2TokenDAO(tokenUrl, username, password, expiresIn);
     }
 
-    protected String readToken(Response response) {
-
-        if (response.getStatus() != Status.OK.getStatusCode()) {
-            String json = response.readEntity(String.class);
-            String message = String.format("Error reading token: %s ... %s", response.getStatus(), json);
-            throw new RuntimeException(message);
-        }
-
-        Token token = response.readEntity(Token.class);
-        return Objects.requireNonNull(token).getAccessToken();
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class Token {
-
-        // TODO: expires, refresh token, etc...
-
-        @XmlAttribute(name = "access_token")
-        private String accessToken;
-
-        public String getAccessToken() {
-            return accessToken;
-        }
-    }
 }

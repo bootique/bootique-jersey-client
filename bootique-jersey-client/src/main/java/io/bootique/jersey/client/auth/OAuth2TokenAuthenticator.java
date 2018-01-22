@@ -3,38 +3,36 @@ package io.bootique.jersey.client.auth;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.MultivaluedMap;
-import java.io.IOException;
-import java.util.function.Supplier;
 
 class OAuth2TokenAuthenticator implements ClientRequestFilter {
 
-    private Supplier<String> tokenSupplier;
-    private volatile String authorization;
+    private OAuth2TokenDAO tokenDAO;
+    private volatile OAuth2Token lastToken;
 
-    static String createTokenAuth(String token) {
+    public OAuth2TokenAuthenticator(OAuth2Token initialToken, OAuth2TokenDAO tokenDAO) {
+        this.tokenDAO = tokenDAO;
+        this.lastToken = initialToken;
+    }
+
+    static String createAuthHeader(String token) {
         return "Bearer " + token;
     }
 
-    public OAuth2TokenAuthenticator(Supplier<String> tokenSupplier) {
-        this.tokenSupplier = tokenSupplier;
-    }
-
-    public void filter(ClientRequestContext requestContext) throws IOException {
+    public void filter(ClientRequestContext requestContext) {
         MultivaluedMap<String, Object> headers = requestContext.getHeaders();
         headers.add("Authorization", getAuthorization());
     }
 
     protected String getAuthorization() {
 
-        if (authorization == null) {
-
+        if (lastToken.needsRefresh()) {
             synchronized (this) {
-                if (authorization == null) {
-                    authorization = createTokenAuth(tokenSupplier.get());
+                if (lastToken.needsRefresh()) {
+                    lastToken = tokenDAO.getToken();
                 }
             }
         }
 
-        return authorization;
+        return createAuthHeader(lastToken.getAccessToken());
     }
 }
