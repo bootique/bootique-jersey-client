@@ -2,7 +2,7 @@ package io.bootique.jersey.client.auth;
 
 import com.google.inject.Injector;
 import io.bootique.jersey.JerseyModule;
-import io.bootique.jetty.test.junit.JettyTestFactory;
+import io.bootique.test.junit.BQTestFactory;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -26,15 +26,15 @@ import static org.mockito.Mockito.mock;
 public class Oauth2AuthenticatorFactoryIT {
 
     @ClassRule
-    public static JettyTestFactory SERVER_APP_FACTORY = new JettyTestFactory();
+    public static BQTestFactory TEST_FACTORY = new BQTestFactory();
 
     @BeforeClass
     public static void beforeClass() {
-        SERVER_APP_FACTORY
-                .app()
+        TEST_FACTORY
+                .app("-s")
                 .autoLoadModules()
                 .module((binder) -> JerseyModule.extend(binder).addResource(TokenApi.class))
-                .start();
+                .run();
     }
 
     @Test
