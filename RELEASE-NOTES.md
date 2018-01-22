@@ -1,5 +1,6 @@
 ## 0.25
 
+* #21 Implement token refresh capability for OAuth2 authentication
 * #23 Ability to register healthchecks for remote web services #23
 
 ## 0.24
