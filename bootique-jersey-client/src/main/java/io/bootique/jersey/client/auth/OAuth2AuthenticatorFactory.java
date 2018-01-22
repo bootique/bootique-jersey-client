@@ -25,9 +25,9 @@ import java.util.Objects;
 @JsonTypeName("oauth2")
 @BQConfig("Authenticator for Oauth2 protocol. Includes URL of the OAuth token endpoint and " +
         "username/password that are exchanged for the token.")
-public class Oauth2AuthenticatorFactory implements AuthenticatorFactory {
+public class OAuth2AuthenticatorFactory implements AuthenticatorFactory {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Oauth2AuthenticatorFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth2AuthenticatorFactory.class);
 
     protected String tokenUrl;
     protected String username;

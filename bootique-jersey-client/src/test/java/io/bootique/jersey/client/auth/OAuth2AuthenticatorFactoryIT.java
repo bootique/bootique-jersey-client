@@ -23,7 +23,7 @@ import javax.ws.rs.core.Response.Status;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
-public class Oauth2AuthenticatorFactoryIT {
+public class OAuth2AuthenticatorFactoryIT {
 
     @ClassRule
     public static BQTestFactory TEST_FACTORY = new BQTestFactory();
@@ -40,7 +40,7 @@ public class Oauth2AuthenticatorFactoryIT {
     @Test
     public void testGetToken() {
 
-        Oauth2AuthenticatorFactory factory = new Oauth2AuthenticatorFactory();
+        OAuth2AuthenticatorFactory factory = new OAuth2AuthenticatorFactory();
         factory.setPassword("p");
         factory.setUsername("u");
         factory.setTokenUrl("http://127.0.0.1:8080/token");
@@ -51,7 +51,7 @@ public class Oauth2AuthenticatorFactoryIT {
     @Test(expected = RuntimeException.class)
     public void testGetToken_Error() {
 
-        Oauth2AuthenticatorFactory factory = new Oauth2AuthenticatorFactory();
+        OAuth2AuthenticatorFactory factory = new OAuth2AuthenticatorFactory();
         factory.setPassword("p");
         factory.setUsername("u");
         factory.setTokenUrl("http://127.0.0.1:8080/token_error");
@@ -62,7 +62,7 @@ public class Oauth2AuthenticatorFactoryIT {
     @Test
     public void testGetWithToken() {
 
-        Oauth2AuthenticatorFactory factory = new Oauth2AuthenticatorFactory();
+        OAuth2AuthenticatorFactory factory = new OAuth2AuthenticatorFactory();
         factory.setPassword("p");
         factory.setUsername("u");
         factory.setTokenUrl("http://127.0.0.1:8080/token");
