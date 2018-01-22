@@ -31,8 +31,10 @@ public class OAuth2Token {
         Objects.requireNonNull(accessToken, "'accessToken' is null");
         Objects.requireNonNull(expiresOn, "'expiresOn' is null");
 
-        // an attempt to refresh a token before it is expired may result in the same token returned from the server (?)
-        // so this may be a dubious optimization... TODO: Need to test with common oauth servers (Google, FB, GitHub)
+        // refresh the token if it is still fresh, but is about to expire... The hope is this improves reliability.
+        // Though in fact we have no idea... E.g. an attempt to refresh a token before it is expired may result in
+        // the same token returned from the server (?) so this may be a dubious optimization...
+        // TODO: Need to test with common oauth servers (Google, FB, GitHub), and maybe make configurable as "refreshDrift"  or something.
         LocalDateTime refreshAfter = Objects.requireNonNull(expiresOn).minusSeconds(2);
         return new OAuth2Token(accessToken, refreshAfter);
     }

@@ -85,8 +85,6 @@ public class OAuth2TokenDAO {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class TokenDTO {
 
-        // TODO: expires, refresh token, etc...
-
         @XmlAttribute(name = "access_token")
         String accessToken;
 
