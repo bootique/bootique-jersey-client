@@ -13,62 +13,72 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 public class DefaultHttpClientFactoryTest {
 
-	private ClientConfig config;
-	private ClientRequestFilter mockAuth1;
-	private ClientRequestFilter mockAuth2;
+    private ClientConfig config;
+    private ClientRequestFilter mockAuth1;
+    private ClientRequestFilter mockAuth2;
 
-	@Before
-	public void before() {
-		config = new ClientConfig();
-		mockAuth1 = mock(ClientRequestFilter.class);
-		mockAuth2 = mock(ClientRequestFilter.class);
-	}
+    @Before
+    public void before() {
+        config = new ClientConfig();
+        mockAuth1 = mock(ClientRequestFilter.class);
+        mockAuth2 = mock(ClientRequestFilter.class);
+    }
 
-	@Test
-	public void testNewClient() {
+    @Test
+    public void testNewClient() {
 
-		config.property("x", "y");
+        config.property("x", "y");
 
-		DefaultHttpClientFactory factory = new DefaultHttpClientFactory(config, null, Collections.emptyMap());
-		Client c = factory.newClient();
-		assertNotNull(c);
+        DefaultHttpClientFactory factory = new DefaultHttpClientFactory(config, null, Collections.emptyMap());
+        Client c = factory.newClient();
+        assertNotNull(c);
 
-		assertEquals("y", c.getConfiguration().getProperty("x"));
-	}
+        assertEquals("y", c.getConfiguration().getProperty("x"));
+    }
 
-	@Test
-	public void testNewClient_Auth() {
+    @Test
+    public void testNewClient_NewInstanceEveryTime() {
 
-		config.property("a", "b");
+        DefaultHttpClientFactory factory = new DefaultHttpClientFactory(config, null, Collections.emptyMap());
+        Client c1 = factory.newClient();
+        Client c2 = factory.newClient();
+        assertNotSame(c1, c2);
+    }
 
-		Map<String, ClientRequestFilter> authFilters = new HashMap<>();
-		authFilters.put("one", mockAuth1);
-		authFilters.put("two", mockAuth2);
+    @Test
+    public void testNewClient_Auth() {
 
-		DefaultHttpClientFactory factory = new DefaultHttpClientFactory(config, null, authFilters);
-		Client c = factory.newAuthenticatedClient("one");
-		assertNotNull(c);
+        config.property("a", "b");
 
-		assertEquals("b", c.getConfiguration().getProperty("a"));
-		assertTrue(c.getConfiguration().isRegistered(mockAuth1));
-		assertFalse(c.getConfiguration().isRegistered(mockAuth2));
-	}
+        Map<String, ClientRequestFilter> authFilters = new HashMap<>();
+        authFilters.put("one", mockAuth1);
+        authFilters.put("two", mockAuth2);
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testNewClient_Auth_BadAuth() {
+        DefaultHttpClientFactory factory = new DefaultHttpClientFactory(config, null, authFilters);
+        Client c = factory.newAuthenticatedClient("one");
+        assertNotNull(c);
 
-		config.property("a", "b");
+        assertEquals("b", c.getConfiguration().getProperty("a"));
+        assertTrue(c.getConfiguration().isRegistered(mockAuth1));
+        assertFalse(c.getConfiguration().isRegistered(mockAuth2));
+    }
 
-		Map<String, ClientRequestFilter> authFilters = new HashMap<>();
-		authFilters.put("one", mockAuth1);
-		authFilters.put("two", mockAuth2);
+    @Test(expected = IllegalArgumentException.class)
+    public void testNewClient_Auth_BadAuth() {
 
-		DefaultHttpClientFactory factory = new DefaultHttpClientFactory(config, null, authFilters);
-		factory.newAuthenticatedClient("three");
-	}
+        config.property("a", "b");
+
+        Map<String, ClientRequestFilter> authFilters = new HashMap<>();
+        authFilters.put("one", mockAuth1);
+        authFilters.put("two", mockAuth2);
+
+        DefaultHttpClientFactory factory = new DefaultHttpClientFactory(config, null, authFilters);
+        factory.newAuthenticatedClient("three");
+    }
 }
