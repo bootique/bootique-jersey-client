@@ -5,6 +5,7 @@ import io.bootique.jersey.JerseyModule;
 import io.bootique.test.junit.BQTestFactory;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 import javax.ws.rs.Consumes;
@@ -23,12 +24,14 @@ import java.time.Duration;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 
 public class OAuth2AuthenticatorFactory_ExpirationIT {
 
     @ClassRule
     public static BQTestFactory TEST_FACTORY = new BQTestFactory();
+
+    @Rule
+    public BQTestFactory clientFactory = new BQTestFactory();
 
     @BeforeClass
     public static void beforeClass() {
@@ -37,6 +40,13 @@ public class OAuth2AuthenticatorFactory_ExpirationIT {
                 .autoLoadModules()
                 .module((binder) -> JerseyModule.extend(binder).addResource(TokenApi.class))
                 .run();
+    }
+
+    private Injector clientStackInjector() {
+        return clientFactory.app()
+                .autoLoadModules()
+                .createRuntime()
+                .getInstance(Injector.class);
     }
 
     @Test
@@ -50,7 +60,7 @@ public class OAuth2AuthenticatorFactory_ExpirationIT {
         factory.setExpiresIn(Duration.ofSeconds(3));
         factory.setTokenUrl("http://127.0.0.1:8080/token");
 
-        ClientRequestFilter filter = factory.createAuthFilter(mock(Injector.class));
+        ClientRequestFilter filter = factory.createAuthFilter(clientStackInjector());
 
         WebTarget api = ClientBuilder
                 .newClient()

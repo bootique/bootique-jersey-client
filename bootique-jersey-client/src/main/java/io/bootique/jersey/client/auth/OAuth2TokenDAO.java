@@ -1,18 +1,18 @@
 package io.bootique.jersey.client.auth;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.glassfish.jersey.jackson.JacksonFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.annotation.XmlAttribute;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * @since 0.25
@@ -26,7 +26,17 @@ public class OAuth2TokenDAO {
     protected String password;
     protected Duration expiresIn;
 
-    public OAuth2TokenDAO(String tokenUrl, String username, String password, Duration expiresIn) {
+    protected Function<String, WebTarget> tokenTargetFactory;
+    protected volatile WebTarget tokenTarget;
+
+    public OAuth2TokenDAO(
+            Function<String, WebTarget> tokenTargetFactory,
+            String tokenUrl,
+            String username,
+            String password,
+            Duration expiresIn) {
+
+        this.tokenTargetFactory = tokenTargetFactory;
         this.tokenUrl = tokenUrl;
         this.username = username;
         this.password = password;
@@ -55,16 +65,23 @@ public class OAuth2TokenDAO {
 
         LOGGER.info("reading OAuth2 token from " + tokenUrl);
 
-        Entity<String> postEntity = Entity.entity("grant_type=client_credentials",
-                MediaType.APPLICATION_FORM_URLENCODED_TYPE);
+        Entity<String> postEntity = Entity
+                .entity("grant_type=client_credentials", MediaType.APPLICATION_FORM_URLENCODED_TYPE);
 
-        return ClientBuilder
-                .newClient()
-                .register(JacksonFeature.class)
-                .target(tokenUrl)
+        return getTokenTarget()
                 .request()
                 .header("Authorization", BasicAuthenticatorFactory.BasicAuthenticator.createBasicAuth(username, password))
                 .post(postEntity);
+    }
+
+    protected WebTarget getTokenTarget() {
+
+        // not concerned about concurrent access and potential multiple instances creation...
+        if (tokenTarget == null) {
+            tokenTarget = tokenTargetFactory.apply(tokenUrl);
+        }
+
+        return tokenTarget;
     }
 
     protected OAuth2Token readToken(Response response) {

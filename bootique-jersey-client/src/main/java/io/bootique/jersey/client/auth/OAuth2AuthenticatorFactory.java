@@ -4,10 +4,14 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.inject.Injector;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
+import io.bootique.jersey.client.HttpClientFactory;
+import org.glassfish.jersey.jackson.JacksonFeature;
 
 import javax.ws.rs.client.ClientRequestFilter;
+import javax.ws.rs.client.WebTarget;
 import java.time.Duration;
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * @since 0.3
@@ -16,7 +20,6 @@ import java.util.Objects;
 @BQConfig("Authenticator for Oauth2 protocol. Includes URL of the OAuth token endpoint and " +
         "username/password that are exchanged for the token.")
 public class OAuth2AuthenticatorFactory implements AuthenticatorFactory {
-
 
     protected String tokenUrl;
     protected String username;
@@ -62,16 +65,23 @@ public class OAuth2AuthenticatorFactory implements AuthenticatorFactory {
 
     @Override
     public ClientRequestFilter createAuthFilter(Injector injector) {
-        OAuth2TokenDAO tokenDAO = createOAuth2TokenDAO();
+        OAuth2TokenDAO tokenDAO = createOAuth2TokenDAO(injector);
         return new OAuth2TokenAuthenticator(OAuth2Token.expiredToken(), tokenDAO);
     }
 
-    protected OAuth2TokenDAO createOAuth2TokenDAO() {
+    protected OAuth2TokenDAO createOAuth2TokenDAO(Injector injector) {
         Objects.requireNonNull(username, "OAuth2 'username' is not specified");
         Objects.requireNonNull(password, "OAuth2 'password' is not specified");
         Objects.requireNonNull(tokenUrl, "OAuth2 'tokenUrl' is not specified");
 
-        return new OAuth2TokenDAO(tokenUrl, username, password, expiresIn);
+        // defer initialization until HttpClientFactory becomes available.
+        Function<String, WebTarget> tokenTargetFactory = tokenUrl -> injector
+                .getInstance(HttpClientFactory.class)
+                .newClient()
+                .register(JacksonFeature.class)
+                .target(tokenUrl);
+
+        return new OAuth2TokenDAO(tokenTargetFactory, tokenUrl, username, password, expiresIn);
     }
 
 }

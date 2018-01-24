@@ -5,6 +5,7 @@ import io.bootique.jersey.JerseyModule;
 import io.bootique.test.junit.BQTestFactory;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 import javax.ws.rs.Consumes;
@@ -22,20 +23,29 @@ import javax.ws.rs.core.Response.Status;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
 
 public class OAuth2AuthenticatorFactoryIT {
 
     @ClassRule
-    public static BQTestFactory TEST_FACTORY = new BQTestFactory();
+    public static BQTestFactory SERVER_FACTORY = new BQTestFactory();
+
+    @Rule
+    public BQTestFactory clientFactory = new BQTestFactory();
 
     @BeforeClass
     public static void beforeClass() {
-        TEST_FACTORY
+        SERVER_FACTORY
                 .app("-s")
                 .autoLoadModules()
                 .module((binder) -> JerseyModule.extend(binder).addResource(TokenApi.class))
                 .run();
+    }
+
+    private Injector clientStackInjector() {
+        return clientFactory.app()
+                .autoLoadModules()
+                .createRuntime()
+                .getInstance(Injector.class);
     }
 
     @Test
@@ -46,7 +56,11 @@ public class OAuth2AuthenticatorFactoryIT {
         factory.setUsername("u");
         factory.setTokenUrl("http://127.0.0.1:8080/token");
 
-        OAuth2Token token = factory.createOAuth2TokenDAO().getToken();
+
+        OAuth2Token token = factory
+                .createOAuth2TokenDAO(clientStackInjector())
+                .getToken();
+
         assertNotNull(token);
         assertEquals("t:client_credentials:Basic dTpw", token.getAccessToken());
     }
@@ -59,7 +73,7 @@ public class OAuth2AuthenticatorFactoryIT {
         factory.setUsername("u");
         factory.setTokenUrl("http://127.0.0.1:8080/token_error");
 
-        factory.createOAuth2TokenDAO().getToken();
+        factory.createOAuth2TokenDAO(clientStackInjector()).getToken();
     }
 
     @Test
@@ -70,7 +84,7 @@ public class OAuth2AuthenticatorFactoryIT {
         factory.setUsername("u");
         factory.setTokenUrl("http://127.0.0.1:8080/token");
 
-        ClientRequestFilter filter = factory.createAuthFilter(mock(Injector.class));
+        ClientRequestFilter filter = factory.createAuthFilter(clientStackInjector());
 
         Response r1 = ClientBuilder
                 .newClient()
