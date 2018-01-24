@@ -1,13 +1,9 @@
 package io.bootique.jersey.client;
 
 import com.google.inject.Module;
-import io.bootique.BQRuntime;
 import io.bootique.jersey.JerseyModule;
 import io.bootique.jetty.JettyModule;
-import io.bootique.test.junit.BQDaemonTestFactory;
 import io.bootique.test.junit.BQTestFactory;
-import org.eclipse.jetty.server.Server;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -20,42 +16,42 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.MediaType;
-import java.util.function.Function;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class CustomFeaturesIT {
+public class HttpClientFactory_CustomFeaturesIT {
 
     @ClassRule
-    public static BQDaemonTestFactory SERVER_APP_FACTORY = new BQDaemonTestFactory();
-    private static BQRuntime SERVER_APP;
+    public static BQTestFactory SERVER_FACTORY = new BQTestFactory();
+
     @Rule
     public BQTestFactory CLIENT_FACTORY = new BQTestFactory();
-    private BQRuntime app;
+
+    private HttpClientFactory clientFactory;
 
     @BeforeClass
-    public static void beforeClass() throws InterruptedException {
-
-        Module jersey = (binder) -> JerseyModule.extend(binder).addResource(Resource.class);
-        Function<BQRuntime, Boolean> startupCheck = r -> r.getInstance(Server.class).isStarted();
-
-        SERVER_APP = SERVER_APP_FACTORY.app("--server")
+    public static void beforeClass() {
+        SERVER_FACTORY.app("--server")
                 .modules(JettyModule.class, JerseyModule.class)
-                .module(jersey)
-                .startupCheck(startupCheck)
-                .start();
-    }
-
-    @AfterClass
-    public static void after() throws InterruptedException {
-        SERVER_APP.shutdown();
+                .module(b -> JerseyModule.extend(b).addResource(Resource.class))
+                .run();
     }
 
     @Before
     public void before() {
-        Module module = binder -> JerseyClientModule.extend(binder).addFeature(Feature1.class).addFeature(Feature2.class);
-        this.app = CLIENT_FACTORY.app().module(JerseyClientModule.class).module(module).createRuntime();
+
+        Module features = binder -> JerseyClientModule
+                .extend(binder)
+                .addFeature(Feature1.class)
+                .addFeature(Feature2.class);
+
+        clientFactory = CLIENT_FACTORY
+                .app()
+                .module(JerseyClientModule.class)
+                .module(features)
+                .createRuntime()
+                .getInstance(HttpClientFactory.class);
     }
 
     @Test
@@ -64,8 +60,7 @@ public class CustomFeaturesIT {
         assertFalse(Feature1.LOADED);
         assertFalse(Feature2.LOADED);
 
-        HttpClientFactory factory = app.getInstance(HttpClientFactory.class);
-        factory.newClient().target("http://127.0.0.1:8080/").request().get().close();
+        clientFactory.newClient().target("http://127.0.0.1:8080/").request().get().close();
 
         assertTrue(Feature1.LOADED);
         assertTrue(Feature2.LOADED);
