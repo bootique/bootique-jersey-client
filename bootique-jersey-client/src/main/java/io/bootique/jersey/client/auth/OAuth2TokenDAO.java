@@ -52,7 +52,7 @@ public class OAuth2TokenDAO {
 
         try {
             OAuth2Token token = readToken(tokenResponse);
-            LOGGER.info("Successfully obtained OAuth2 token. Expires on {}", token.getRefreshAfter());
+            LOGGER.info("Successfully obtained OAuth2 token. Expires at {}", token.getRefreshAfter());
             return token;
         } finally {
             tokenResponse.close();
