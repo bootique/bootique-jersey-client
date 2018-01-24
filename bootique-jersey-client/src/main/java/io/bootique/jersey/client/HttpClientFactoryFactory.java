@@ -5,6 +5,7 @@ import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.jersey.client.auth.AuthenticatorFactory;
 import io.bootique.jersey.client.log.JULSlf4jLogger;
+import io.bootique.jersey.client.targets.WebTargetFactory;
 import io.bootique.resource.ResourceFactory;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
@@ -15,12 +16,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.ClientRequestFilter;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Feature;
 import java.security.KeyStore;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 @BQConfig("Configures HttpClientFactory, including named authenticators, timeouts, SSL certificates, etc.")
 public class HttpClientFactoryFactory {
@@ -38,6 +41,7 @@ public class HttpClientFactoryFactory {
     TrustStoreFactory defaultTrustStore;
 
     Map<String, TrustStoreFactory> trustStores;
+    Map<String, WebTargetFactory> targets;
 
     public HttpClientFactoryFactory() {
         this.followRedirects = true;
@@ -130,10 +134,32 @@ public class HttpClientFactoryFactory {
         this.compression = compression;
     }
 
+    /**
+     * Sets a map of named target factories. This allows to define remote endpoints completely via configuration.
+     *
+     * @param targets a map of named target factories.
+     * @since 0.25
+     */
+    @BQConfigProperty
+    public void setTargets(Map<String, WebTargetFactory> targets) {
+        this.targets = targets;
+    }
+
+    /**
+     * Creates and returns a new HttpTargetFactory for the  set of targets preconfigured in this factory.
+     *
+     * @param clientFactory
+     * @return a new HttpTargetFactory for the preconfigured set of targets.
+     * @since 0.25
+     */
+    public HttpTargets createTargets(HttpClientFactory clientFactory) {
+        return new DefaultHttpTargets(createNamedTargets(clientFactory));
+    }
+
     public HttpClientFactory createClientFactory(Injector injector, Set<Feature> features) {
         ClientConfig config = createConfig(features);
 
-        // register Guice Injector as a service in Jersey HK2, and GuiceBridgeFeature as a
+        // register Guice Injector as a service in Jersey HK2, and GuiceBridgeFeature as a client Feature
         ClientGuiceBridgeFeature.register(config, injector);
 
         // deprecated...
@@ -203,5 +229,16 @@ public class HttpClientFactoryFactory {
             LoggingFilter logFilter = new LoggingFilter(julWrapper, false);
             config.register(logFilter);
         }
+    }
+
+    protected Map<String, Supplier<WebTarget>> createNamedTargets(HttpClientFactory clientFactory) {
+        if (targets == null || targets.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        Map<String, Supplier<WebTarget>> suppliers = new HashMap<>();
+        targets.forEach((n, f) -> suppliers.put(n, f.createWebTargetSupplier(clientFactory)));
+
+        return suppliers;
     }
 }

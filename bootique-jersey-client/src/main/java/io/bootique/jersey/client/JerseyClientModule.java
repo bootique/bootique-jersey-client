@@ -44,13 +44,23 @@ public class JerseyClientModule extends ConfigModule {
 
     @Provides
     @Singleton
-    HttpClientFactory createClientFactory(
-            ConfigurationFactory configurationFactory,
+    HttpClientFactoryFactory provideClientFactoryFactory(ConfigurationFactory configurationFactory) {
+        return configurationFactory.config(HttpClientFactoryFactory.class, configPrefix);
+    }
+
+    @Provides
+    @Singleton
+    HttpClientFactory provideClientFactory(
+            HttpClientFactoryFactory factoryFactory,
             Injector injector,
             @JerseyClientFeatures Set<Feature> features) {
+        
+        return factoryFactory.createClientFactory(injector, features);
+    }
 
-        return configurationFactory
-                .config(HttpClientFactoryFactory.class, configPrefix)
-                .createClientFactory(injector, features);
+    @Provides
+    @Singleton
+    HttpTargets provideTargets(HttpClientFactoryFactory factoryFactory, HttpClientFactory clientFactory) {
+        return factoryFactory.createTargets(clientFactory);
     }
 }

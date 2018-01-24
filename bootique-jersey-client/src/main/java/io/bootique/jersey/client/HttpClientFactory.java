@@ -10,8 +10,7 @@ import javax.ws.rs.client.Client;
 public interface HttpClientFactory {
 
     /**
-     * Returns a new instance of JAX-RS HTTP client initialized using
-     * "jerseyclient" configuration subtree.
+     * Returns a new instance of JAX-RS HTTP {@link Client} initialized using "jerseyclient" configuration subtree.
      *
      * @return a new instance of JAX-RS HTTP client initialized using
      * "jerseyclient" configuration subtree.
