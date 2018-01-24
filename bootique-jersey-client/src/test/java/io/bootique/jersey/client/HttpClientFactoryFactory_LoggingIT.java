@@ -3,12 +3,10 @@ package io.bootique.jersey.client;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import io.bootique.BQCoreModule;
-import io.bootique.BQRuntime;
 import io.bootique.jersey.JerseyModule;
 import io.bootique.jetty.JettyModule;
 import io.bootique.logback.LogbackModule;
-import io.bootique.test.junit.BQDaemonTestFactory;
-import org.eclipse.jetty.server.Server;
+import io.bootique.test.junit.BQTestFactory;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -25,7 +23,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
 import java.util.logging.Level;
 
 import static java.util.Arrays.asList;
@@ -37,30 +34,28 @@ import static org.mockito.Mockito.mock;
 public class HttpClientFactoryFactory_LoggingIT {
 
     @Rule
-    public BQDaemonTestFactory serverFactory = new BQDaemonTestFactory();
+    public BQTestFactory serverFactory = new BQTestFactory();
+
     private Injector mockInjector;
     private File logsDir;
 
     private void startApp(String config) {
 
-        Module extensions = (binder) -> {
-            JerseyModule.extend(binder).addResource(Resource.class);
+        Module extensions = b -> {
+            JerseyModule.extend(b).addResource(Resource.class);
 
             // TODO: this test is seriously dirty.. we don't start the client from Bootique,
             // yet we reuse Bootique Logback configuration for client logging.
             // so here we are turning off logging from the server....
-            BQCoreModule.extend(binder)
+            BQCoreModule.extend(b)
                     .setLogLevel("org.eclipse.jetty.server", Level.OFF)
                     .setLogLevel("org.eclipse.jetty.util", Level.OFF);
         };
 
-        Function<BQRuntime, Boolean> startupCheck = r -> r.getInstance(Server.class).isStarted();
-
         serverFactory.app("--server", "--config=src/test/resources/io/bootique/jersey/client/" + config)
                 .modules(JettyModule.class, JerseyModule.class, LogbackModule.class)
                 .module(extensions)
-                .startupCheck(startupCheck)
-                .start();
+                .run();
     }
 
     @Before

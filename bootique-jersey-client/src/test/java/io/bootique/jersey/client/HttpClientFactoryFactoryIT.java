@@ -1,15 +1,11 @@
 package io.bootique.jersey.client;
 
 import com.google.inject.Injector;
-import com.google.inject.Module;
-import io.bootique.BQRuntime;
 import io.bootique.jersey.JerseyModule;
 import io.bootique.jersey.client.auth.AuthenticatorFactory;
 import io.bootique.jersey.client.auth.BasicAuthenticatorFactory;
 import io.bootique.jetty.JettyModule;
-import io.bootique.test.junit.BQDaemonTestFactory;
-import org.eclipse.jetty.server.Server;
-import org.junit.AfterClass;
+import io.bootique.test.junit.BQTestFactory;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -29,7 +25,6 @@ import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -38,26 +33,17 @@ import static org.mockito.Mockito.mock;
 public class HttpClientFactoryFactoryIT {
 
     @ClassRule
-    public static BQDaemonTestFactory SERVER_APP_FACTORY = new BQDaemonTestFactory();
+    public static BQTestFactory SERVER_FACTORY = new BQTestFactory();
 
-    private static BQRuntime SERVER_APP;
     private Injector mockInjector;
 
     @BeforeClass
     public static void beforeClass() {
-        Module jersey = (binder) -> JerseyModule.extend(binder).addResource(Resource.class);
-        Function<BQRuntime, Boolean> startupCheck = r -> r.getInstance(Server.class).isStarted();
-
-        SERVER_APP = SERVER_APP_FACTORY.app("--server")
+        SERVER_FACTORY
+                .app("--server")
                 .modules(JettyModule.class, JerseyModule.class)
-                .module(jersey)
-                .startupCheck(startupCheck)
-                .start();
-    }
-
-    @AfterClass
-    public static void after() {
-        SERVER_APP.shutdown();
+                .module(b -> JerseyModule.extend(b).addResource(Resource.class))
+                .run();
     }
 
     @Before
