@@ -20,7 +20,7 @@ import javax.ws.rs.core.MediaType;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class HttpClientFactory_CustomFeaturesIT {
+public class HttpClientFactory_FeaturesIT {
 
     @ClassRule
     public static BQTestFactory SERVER_FACTORY = new BQTestFactory();
