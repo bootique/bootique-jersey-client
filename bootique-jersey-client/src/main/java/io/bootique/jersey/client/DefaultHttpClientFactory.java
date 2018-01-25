@@ -61,7 +61,7 @@ public class DefaultHttpClientFactory implements HttpClientFactory {
         return trustStore;
     }
 
-    public class DefaultHttpClientBuilder implements HttpClientBuilder<DefaultHttpClientBuilder> {
+    public class DefaultHttpClientBuilder implements HttpClientBuilder {
 
         private ClientBuilder delegate;
 
@@ -73,12 +73,12 @@ public class DefaultHttpClientFactory implements HttpClientFactory {
             return delegate.build();
         }
 
-        public DefaultHttpClientBuilder auth(String authName) {
+        public HttpClientBuilder auth(String authName) {
             delegate.register(namedAuth(authName));
             return this;
         }
 
-        public DefaultHttpClientBuilder trustStore(String trustStoreName) {
+        public HttpClientBuilder trustStore(String trustStoreName) {
             delegate.trustStore(namedTrustStore(trustStoreName));
             return this;
         }

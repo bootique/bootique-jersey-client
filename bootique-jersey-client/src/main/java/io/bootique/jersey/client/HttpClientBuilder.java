@@ -8,11 +8,11 @@ import javax.ws.rs.client.Client;
  *
  * @since 0.25
  */
-public interface HttpClientBuilder<T extends HttpClientBuilder<T>> {
+public interface HttpClientBuilder {
 
     Client build();
 
-    T auth(String authName);
+    HttpClientBuilder auth(String authName);
 
-    T trustStore(String trustStoreName);
+    HttpClientBuilder trustStore(String trustStoreName);
 }
