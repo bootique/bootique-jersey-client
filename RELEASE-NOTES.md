@@ -4,6 +4,7 @@
 * #23 Ability to register healthchecks for remote web services
 * #27 OAuth2TokenAuthenticator must create its internal Client via HttpClientFactory
 * #28 Named truststores, Client builder
+* #29 Flip 'followRedirects' config default to true, clarify other defaults
 
 ## 0.24
 

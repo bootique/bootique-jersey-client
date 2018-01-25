@@ -76,14 +76,14 @@ public class HttpClientFactoryFactoryIT {
     }
 
     @Test
-    public void testCreateClientFactory_DefaultRedirect_NoFollow() {
+    public void testCreateClientFactory_DefaultRedirect_Follow() {
 
         HttpClientFactoryFactory factoryFactory = new HttpClientFactoryFactory();
         Client client = factoryFactory.createClientFactory(mockInjector, Collections.emptySet()).newClient();
 
         Response r = client.target("http://127.0.0.1:8080/").path("/302").request().get();
-        assertEquals(Status.TEMPORARY_REDIRECT.getStatusCode(), r.getStatus());
-        assertEquals("http://127.0.0.1:8080/get", r.getHeaderString("location"));
+        assertEquals(Status.OK.getStatusCode(), r.getStatus());
+        assertEquals("got", r.readEntity(String.class));
     }
 
     @Test

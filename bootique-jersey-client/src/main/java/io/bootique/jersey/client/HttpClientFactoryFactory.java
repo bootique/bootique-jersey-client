@@ -40,6 +40,7 @@ public class HttpClientFactoryFactory {
     Map<String, TrustStoreFactory> trustStores;
 
     public HttpClientFactoryFactory() {
+        this.followRedirects = true;
         this.compression = true;
     }
 
@@ -87,22 +88,22 @@ public class HttpClientFactoryFactory {
         this.auth = auth;
     }
 
-    @BQConfigProperty
+    @BQConfigProperty("Sets whether the client should autromatically follow redirects. The default is 'true'.")
     public void setFollowRedirects(boolean followRedirects) {
         this.followRedirects = followRedirects;
     }
 
-    @BQConfigProperty
+    @BQConfigProperty("Sets the read timeout. The default (0) means no timeout.")
     public void setReadTimeoutMs(int readTimeoutMs) {
         this.readTimeoutMs = readTimeoutMs;
     }
 
-    @BQConfigProperty
+    @BQConfigProperty("Sets the connect timeout. The default (0) means no timeout.")
     public void setConnectTimeoutMs(int connectTimeoutMs) {
         this.connectTimeoutMs = connectTimeoutMs;
     }
 
-    @BQConfigProperty
+    @BQConfigProperty("Sets the size of the async requests thread pool. The default (0) sets no limit on the pool.")
     public void setAsyncThreadPoolSize(int asyncThreadPoolSize) {
         this.asyncThreadPoolSize = asyncThreadPoolSize;
     }
