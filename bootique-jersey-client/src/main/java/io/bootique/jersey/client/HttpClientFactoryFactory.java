@@ -5,7 +5,6 @@ import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.jersey.client.auth.AuthenticatorFactory;
 import io.bootique.jersey.client.log.JULSlf4jLogger;
-import io.bootique.jersey.client.targets.WebTargetFactory;
 import io.bootique.resource.ResourceFactory;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
@@ -237,7 +236,7 @@ public class HttpClientFactoryFactory {
         }
 
         Map<String, Supplier<WebTarget>> suppliers = new HashMap<>();
-        targets.forEach((n, f) -> suppliers.put(n, f.createWebTargetSupplier(clientFactory)));
+        targets.forEach((n, f) -> suppliers.put(n, f.createWebTargetSupplier(clientFactory, compression)));
 
         return suppliers;
     }
