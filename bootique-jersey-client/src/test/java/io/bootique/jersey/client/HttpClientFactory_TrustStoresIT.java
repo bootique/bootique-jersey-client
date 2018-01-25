@@ -18,7 +18,7 @@ import javax.ws.rs.core.Response;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class TrustStoresIT {
+public class HttpClientFactory_TrustStoresIT {
 
     // hostname must be 'localhost'... '127.0.0.1' will cause SSL errors
     private static final String SERVICE_URL = "https://localhost:14001/get";
@@ -27,7 +27,7 @@ public class TrustStoresIT {
     public static BQTestFactory SERVER_FACTORY = new BQTestFactory();
 
     @Rule
-    public BQTestFactory testFactory = new BQTestFactory();
+    public BQTestFactory clientFactory = new BQTestFactory();
 
     @BeforeClass
     public static void beforeClass() {
@@ -45,7 +45,7 @@ public class TrustStoresIT {
     @Deprecated
     public void testDefaultTrustStore() {
 
-        HttpClientFactory factory = testFactory
+        HttpClientFactory factory = clientFactory
                 .app("-c", "classpath:io/bootique/jersey/client/TrustStoresIT_client_deprecated.yml")
                 .module(new JerseyClientModuleProvider())
                 .module(new LogbackModuleProvider())
@@ -61,7 +61,7 @@ public class TrustStoresIT {
     @Test
     public void testNamedTrustStore() {
 
-        HttpClientFactory factory = testFactory
+        HttpClientFactory factory = clientFactory
                 .app("-c", "classpath:io/bootique/jersey/client/TrustStoresIT_client.yml")
                 .module(new JerseyClientModuleProvider())
                 .module(new LogbackModuleProvider())
@@ -91,7 +91,7 @@ public class TrustStoresIT {
     @Test(expected = IllegalArgumentException.class)
     public void testNamedTrustStore_Invalid() {
 
-        HttpClientFactory factory = testFactory
+        HttpClientFactory factory = clientFactory
                 .app("-c", "classpath:io/bootique/jersey/client/TrustStoresIT_client.yml")
                 .module(new JerseyClientModuleProvider())
                 .module(new LogbackModuleProvider())

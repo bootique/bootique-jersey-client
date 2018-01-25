@@ -84,7 +84,7 @@ public class JerseyClientModuleProvider_MetadataIT {
                 "[connectTimeoutMs:int]" +
                 "[followRedirects:boolean]" +
                 "[readTimeoutMs:int]" +
-                "[map:targets<java.lang.String,io.bootique.jersey.client.targets.WebTargetFactory>]" +
+                "[map:targets<java.lang.String,io.bootique.jersey.client.WebTargetFactory>]" +
                 "[trustStore:io.bootique.resource.ResourceFactory]" +
                 "[trustStorePassword:java.lang.String]" +
                 "[map:trustStores<java.lang.String,io.bootique.jersey.client.TrustStoreFactory>]", result);
