@@ -1,0 +1,6 @@
+jetty:
+  connectors:
+    - type: https
+      port: 14001
+      keyStore: 'classpath:io/bootique/jersey/client/testkeystore'
+      keyStorePassword: 'supersecret'

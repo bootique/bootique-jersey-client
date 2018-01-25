@@ -1,0 +1,4 @@
+jerseyclient:
+  # This is deprecated since 0.25
+  trustStore: 'classpath:io/bootique/jersey/client/testkeystore'
+  trustStorePassword: 'supersecret'

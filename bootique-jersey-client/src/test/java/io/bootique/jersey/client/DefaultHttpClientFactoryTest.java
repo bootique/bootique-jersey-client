@@ -35,7 +35,7 @@ public class DefaultHttpClientFactoryTest {
 
         config.property("x", "y");
 
-        DefaultHttpClientFactory factory = new DefaultHttpClientFactory(config, null, Collections.emptyMap());
+        DefaultHttpClientFactory factory = new DefaultHttpClientFactory(config, null, Collections.emptyMap(), Collections.emptyMap());
         Client c = factory.newClient();
         assertNotNull(c);
 
@@ -45,14 +45,19 @@ public class DefaultHttpClientFactoryTest {
     @Test
     public void testNewClient_NewInstanceEveryTime() {
 
-        DefaultHttpClientFactory factory = new DefaultHttpClientFactory(config, null, Collections.emptyMap());
+        DefaultHttpClientFactory factory = new DefaultHttpClientFactory(
+                config,
+                null,
+                Collections.emptyMap(),
+                Collections.emptyMap());
+
         Client c1 = factory.newClient();
         Client c2 = factory.newClient();
         assertNotSame(c1, c2);
     }
 
     @Test
-    public void testNewClient_Auth() {
+    public void testNewClientBuilder_Auth() {
 
         config.property("a", "b");
 
@@ -60,8 +65,8 @@ public class DefaultHttpClientFactoryTest {
         authFilters.put("one", mockAuth1);
         authFilters.put("two", mockAuth2);
 
-        DefaultHttpClientFactory factory = new DefaultHttpClientFactory(config, null, authFilters);
-        Client c = factory.newAuthenticatedClient("one");
+        DefaultHttpClientFactory factory = new DefaultHttpClientFactory(config, null, authFilters, Collections.emptyMap());
+        Client c = factory.newBuilder().auth("one").build();
         assertNotNull(c);
 
         assertEquals("b", c.getConfiguration().getProperty("a"));
@@ -78,7 +83,7 @@ public class DefaultHttpClientFactoryTest {
         authFilters.put("one", mockAuth1);
         authFilters.put("two", mockAuth2);
 
-        DefaultHttpClientFactory factory = new DefaultHttpClientFactory(config, null, authFilters);
-        factory.newAuthenticatedClient("three");
+        DefaultHttpClientFactory factory = new DefaultHttpClientFactory(config, null, authFilters, Collections.emptyMap());
+        factory.newBuilder().auth("three");
     }
 }

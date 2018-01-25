@@ -64,7 +64,7 @@ public class HttpClientFactoryIT {
                         .createRuntime()
                         .getInstance(HttpClientFactory.class);
 
-        Client client = factory.newAuthenticatedClient("auth1");
+        Client client = factory.newBuilder().auth("auth1").build();
 
         Response r1 = client.target("http://127.0.0.1:8080/get_auth").request().get();
         assertEquals(Response.Status.OK.getStatusCode(), r1.getStatus());

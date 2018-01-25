@@ -13,37 +13,74 @@ import java.util.Map;
  */
 public class DefaultHttpClientFactory implements HttpClientFactory {
 
+    @Deprecated
+    KeyStore trustStore;
     private ClientConfig config;
     private Map<String, ClientRequestFilter> authFilters;
-    private KeyStore trustStore;
+    private Map<String, KeyStore> trustStores;
 
-    public DefaultHttpClientFactory(ClientConfig config, KeyStore trustStore, Map<String, ClientRequestFilter> authFilters) {
+    public DefaultHttpClientFactory(
+            ClientConfig config,
+            // deprecated parameter...
+            KeyStore trustStore,
+            Map<String, ClientRequestFilter> authFilters,
+            Map<String, KeyStore> trustStores) {
+
         this.authFilters = authFilters;
         this.config = config;
         this.trustStore = trustStore;
+        this.trustStores = trustStores;
     }
 
     @Override
-    public Client newClient() {
-
-        ClientBuilder builder = ClientBuilder.newBuilder().withConfig(config);
+    public HttpClientBuilder newBuilder() {
+        ClientBuilder builderDelegate = ClientBuilder.newBuilder().withConfig(config);
 
         if (trustStore != null) {
-            builder = builder.trustStore(trustStore);
+            builderDelegate.trustStore(trustStore);
         }
 
-        return builder.build();
+        return new DefaultHttpClientBuilder(builderDelegate);
     }
 
-    @Override
-    public Client newAuthenticatedClient(String authName) {
-
-        ClientRequestFilter filter = authFilters.get(authName);
+    private ClientRequestFilter namedAuth(String name) {
+        ClientRequestFilter filter = authFilters.get(name);
         if (filter == null) {
-            throw new IllegalArgumentException("No authenticator configured for name: " + authName);
+            throw new IllegalArgumentException("No authenticator configured for name: " + name);
         }
 
-        return newClient().register(filter);
+        return filter;
     }
 
+    private KeyStore namedTrustStore(String name) {
+        KeyStore trustStore = trustStores.get(name);
+        if (trustStore == null) {
+            throw new IllegalArgumentException("No truststore configured for name: " + name);
+        }
+
+        return trustStore;
+    }
+
+    public class DefaultHttpClientBuilder implements HttpClientBuilder<DefaultHttpClientBuilder> {
+
+        private ClientBuilder delegate;
+
+        public DefaultHttpClientBuilder(ClientBuilder delegate) {
+            this.delegate = delegate;
+        }
+
+        public Client build() {
+            return delegate.build();
+        }
+
+        public DefaultHttpClientBuilder auth(String authName) {
+            delegate.register(namedAuth(authName));
+            return this;
+        }
+
+        public DefaultHttpClientBuilder trustStore(String trustStoreName) {
+            delegate.trustStore(namedTrustStore(trustStoreName));
+            return this;
+        }
+    }
 }

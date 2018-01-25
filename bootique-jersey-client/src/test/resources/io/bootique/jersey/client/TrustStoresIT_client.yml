@@ -1,0 +1,13 @@
+# Both stores contain the same key as the server and each other, but are using different password:
+#
+#  keytool -importkeystore -srckeystore bootique-jersey-client/src/test/resources/io/bootique/jersey/client/testkeystore \
+#	 -destkeystore bootique-jersey-client/src/test/resources/io/bootique/jersey/client/testkeystore_default_password \
+#	 -srcstorepass supersecret -deststorepass changeit -srcalias "jetty"
+#
+jerseyclient:
+  trustStores:
+    t1:
+      location: 'classpath:io/bootique/jersey/client/testkeystore'
+      password: 'supersecret'
+    t2_default_password:
+      location: 'classpath:io/bootique/jersey/client/testkeystore_default_password'

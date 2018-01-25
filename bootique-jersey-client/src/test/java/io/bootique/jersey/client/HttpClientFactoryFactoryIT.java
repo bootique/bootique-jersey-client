@@ -167,8 +167,11 @@ public class HttpClientFactoryFactoryIT {
         Map<String, AuthenticatorFactory> auth = new HashMap<>();
         auth.put("a1", authenticator);
         factoryFactory.setAuth(auth);
-        Client client = factoryFactory.createClientFactory(mockInjector, Collections.emptySet())
-                .newAuthenticatedClient("a1");
+
+        Client client = factoryFactory
+                .createClientFactory(mockInjector, Collections.emptySet())
+                .newBuilder().auth("a1")
+                .build();
 
         Response r = client.target("http://127.0.0.1:8080/").path("/basicget").request().get();
         assertEquals(Status.OK.getStatusCode(), r.getStatus());

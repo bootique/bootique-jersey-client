@@ -16,20 +16,16 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.Feature;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 @BQConfig("Configures HttpClientFactory, including named authenticators, timeouts, SSL certificates, etc.")
 public class HttpClientFactoryFactory {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpClientFactoryFactory.class);
 
     boolean followRedirects;
     boolean compression;
@@ -37,12 +33,14 @@ public class HttpClientFactoryFactory {
     int connectTimeoutMs;
     int asyncThreadPoolSize;
     Map<String, AuthenticatorFactory> auth;
-    ResourceFactory trustStore;
-    String trustStorePassword;
+
+    @Deprecated
+    TrustStoreFactory defaultTrustStore;
+
+    Map<String, TrustStoreFactory> trustStores;
 
     public HttpClientFactoryFactory() {
         this.compression = true;
-        this.trustStorePassword = "changeit";
     }
 
     /**
@@ -50,22 +48,34 @@ public class HttpClientFactoryFactory {
      *
      * @param trustStore a resource URL pointing to the location of truststore.
      * @since 0.7
+     * @deprecated since 0.25 in favor of named trust stores.
      */
-    @BQConfigProperty("Optional resource URL specifying the location of the trust store that keeps SSL certificates" +
-            " for the known servers.")
+    @BQConfigProperty("@Deprecated: use 'trustStores.[name].location'. Optional resource URL specifying the location of the " +
+            "trust store that keeps SSL certificates for the known servers.")
+    @Deprecated
     public void setTrustStore(ResourceFactory trustStore) {
-        this.trustStore = trustStore;
+
+        LOGGER.warn("** Use of deprecated 'trustStore' property. Consider configuring named trust stores. " +
+                "For more details see https://github.com/bootique/bootique-jersey-client/issues/28");
+
+        getOrCreateDefaultTrustStoreFactory().setLocation(trustStore);
     }
 
     /**
      * Sets trust store password. Default is "changeit".
      *
      * @param trustStorePassword trust store password.
+     * @deprecated since 0.25 in favor of named trust stores.
      */
-    @BQConfigProperty("Password for the store specified via 'trustStore' property. In the best Java tradition, " +
-            "the default is 'changeit'.")
+    @Deprecated
+    @BQConfigProperty("@Deprecated: use 'trustStores.[name].password'. Password for the store specified via 'trustStore' " +
+            "property. In the best Java tradition, the default is 'changeit'.")
     public void setTrustStorePassword(String trustStorePassword) {
-        this.trustStorePassword = Objects.requireNonNull(trustStorePassword);
+
+        LOGGER.warn("** Use of deprecated 'trustStorePassword' property. Consider configuring named trust stores. " +
+                "For more details see https://github.com/bootique/bootique-jersey-client/issues/28");
+
+        getOrCreateDefaultTrustStoreFactory().setPassword(trustStorePassword);
     }
 
     /**
@@ -98,6 +108,17 @@ public class HttpClientFactoryFactory {
     }
 
     /**
+     * Sets a map of named client trust store factories.
+     *
+     * @param trustStores a map of named trust store factories.
+     * @since 0.25
+     */
+    @BQConfigProperty
+    public void setTrustStores(Map<String, TrustStoreFactory> trustStores) {
+        this.trustStores = trustStores;
+    }
+
+    /**
      * Enables or disables client-side compression headers. True by default.
      *
      * @param compression whether compression should be requested.
@@ -111,31 +132,37 @@ public class HttpClientFactoryFactory {
     public HttpClientFactory createClientFactory(Injector injector, Set<Feature> features) {
         ClientConfig config = createConfig(features);
 
-        // register Guice Injector as a service in Jersey HK2, and
-        // GuiceBridgeFeature as a
+        // register Guice Injector as a service in Jersey HK2, and GuiceBridgeFeature as a
         ClientGuiceBridgeFeature.register(config, injector);
 
-        KeyStore trustStore = createTrustStore();
+        // deprecated...
+        KeyStore defaultTrustStoreResolved = defaultTrustStore != null ? defaultTrustStore.createTrustStore() : null;
 
-        return new DefaultHttpClientFactory(config, trustStore, createAuthFilters(injector));
+        return new DefaultHttpClientFactory(
+                config,
+                defaultTrustStoreResolved,
+                createAuthFilters(injector),
+                createTrustStores());
     }
 
-    protected KeyStore createTrustStore() {
-        if (this.trustStore == null) {
-            return null;
+    @Deprecated
+    private TrustStoreFactory getOrCreateDefaultTrustStoreFactory() {
+        if (defaultTrustStore == null) {
+            defaultTrustStore = new TrustStoreFactory();
         }
 
-        URL url = this.trustStore.getUrl();
-        KeyStore trustStore;
+        return defaultTrustStore;
+    }
 
-        try (InputStream in = url.openStream()) {
-            trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            trustStore.load(in, trustStorePassword.toCharArray());
-        } catch (CertificateException | NoSuchAlgorithmException | KeyStoreException | IOException e) {
-            throw new RuntimeException("Error loading client trust store from " + url, e);
+    protected Map<String, KeyStore> createTrustStores() {
+
+        if (trustStores == null) {
+            return Collections.emptyMap();
         }
 
-        return trustStore;
+        Map<String, KeyStore> keyStores = new HashMap<>();
+        trustStores.forEach((k, v) -> keyStores.put(k, v.createTrustStore()));
+        return keyStores;
     }
 
     protected Map<String, ClientRequestFilter> createAuthFilters(Injector injector) {

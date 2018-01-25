@@ -3,6 +3,7 @@
 * #21 Implement token refresh capability for OAuth2 authentication
 * #23 Ability to register healthchecks for remote web services
 * #27 OAuth2TokenAuthenticator must create its internal Client via HttpClientFactory
+* #28 Named truststores, Client builder
 
 ## 0.24
 
