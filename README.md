@@ -109,7 +109,7 @@ private HttpClientFactory clientFactory;
 
 public void doSomething() {
 
-    Client client = clientFactory.newAuthenticatedClient("myauth");
+    Client client = clientFactory.newClientBuilder().auth("myauth").build();
     Response response = client
         .target("https://example.org")
         .request()
