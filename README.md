@@ -128,9 +128,9 @@ jerseyclient:
 
 ## Using OAuth2 Authentication
 
-OAuth2 authentication is very similar tio BASIC. They are no different
-on the Java end. In YAML the type is "oauth2", and an extra key - "tokenUrl" is required.
-Here is an example auth for a Twitter client:
+OAuth2 authentication is very similar to BASIC. In fact they are no different
+on the Java end. In YAML the type should be "oauth2", and an extra "tokenUrl"
+property is required. Here is an example auth for a Twitter client:
 
 ```yml
 jerseyclient:
