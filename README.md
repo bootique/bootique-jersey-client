@@ -4,7 +4,9 @@
 # bootique-jersey-client
 
 Integrates JAX-RS-based HTTP client in [Bootique](http://bootique.io) with support for various types of 
-server authentication (BASIC, OAuth2, etc.). Implementation is built on top of [Jersey](https://jersey.java.net/)
+server authentication (BASIC, OAuth2, etc.). Allows to configure multiple
+client runtime parameters, as well as define server URL endpoints.
+Implementation is built on top of [Jersey](https://jersey.java.net/)
 and Grizzly connector.
  
 ## Quick Start
