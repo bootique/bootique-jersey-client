@@ -92,7 +92,7 @@ without changing the code.
 
 If your server endpoint requires BASIC authentication, you can associate
 your Clients and WebTargets with a named auth configuration. One or more
-named configurations are configured like this:
+named configurations are setup like this:
 
 ```yml
 jerseyclient:
