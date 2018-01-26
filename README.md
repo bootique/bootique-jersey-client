@@ -85,7 +85,8 @@ public void doSomething() {
 ```
 This not only reduces the amount of code, but more importantly allows
 to manage your URLs (and their runtime parameters) via configuration.
-E.g. you might use a different URL between test and production environments.
+E.g. you might use a different URL between test and production environments
+without changing the code.
 
 ## Using BASIC Authentication
 
