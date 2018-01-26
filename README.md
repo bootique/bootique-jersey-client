@@ -102,7 +102,7 @@ jerseyclient:
       username: myuser
       password: mypassword
 ```
-When creating a client in the Java code you can reference auth name above:
+When creating a client in the Java code you can reference auth name ("myauth"):
 ```java
 @Inject
 private HttpClientFactory clientFactory;
