@@ -90,7 +90,9 @@ without changing the code.
 
 ## Using BASIC Authentication
 
-Create named auth configuration (can be more than one):
+If your server endpoint requires BASIC authentication, you can associate
+your Clients and WebTargets with a named auth configuration. One or more
+named configurations are configured like this:
 
 ```yml
 jerseyclient:
@@ -100,8 +102,7 @@ jerseyclient:
       username: myuser
       password: mypassword
 ```
-
-Reference named configuration when creating a client:
+When creating a client in the Java code you can reference auth name above:
 ```java
 @Inject
 private HttpClientFactory clientFactory;
@@ -115,8 +116,7 @@ public void doSomething() {
         .get();
 } 
 ```
-Or reference it to in a named target:
-
+Or you can associate a target with it:
 ```yml
 jerseyclient:
   ...
