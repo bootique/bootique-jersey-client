@@ -46,7 +46,7 @@ public void doSomething() {
 ## Configuring Connection Parameters
 
 You can specify a number of runtime parameters for your HTTP clients via
-your app ```.yml``` (or any other Bootique configuration mechanism):
+the app ```.yml``` (or any other Bootique configuration mechanism):
 
 ```yml
 jerseyclient:
