@@ -58,10 +58,10 @@ jerseyclient:
 
 ## Mapping URL Targets
 
-In the example above we injected client factory, and had to hardcoded the
-endpoint URL in Java. Instead you can map multiple URLs in the ```.yml```,
-assigning each URL a symbolic name and optionally providing URL-specific
-runtime parameters.
+In the example above we injected `HttpClientFactory` (that produced instances
+of JAX RS `Client`), and hardcoded the endpoint URL in Java. Instead you
+can map multiple URLs in the ```.yml```, assigning each URL a symbolic
+name and optionally providing URL-specific runtime parameters:
 
 ```yml
 jerseyclient:
@@ -72,11 +72,8 @@ jerseyclient:
       url: "https://bootique.io"
       followRedirects: false
 ```
-
-
-Now you can inject `HttpTargets` instance, and use it to access specific
-targets by name:
-
+Now you can inject `HttpTargets` and acquire instances of `WebTarget`
+by name:
 ```java
 @Inject
 private HttpTargets targets;
