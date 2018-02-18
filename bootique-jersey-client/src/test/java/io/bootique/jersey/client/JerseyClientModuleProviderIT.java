@@ -6,8 +6,8 @@ import org.junit.Test;
 public class JerseyClientModuleProviderIT {
 
     @Test
-    public void testPresentInJar() {
-        BQModuleProviderChecker.testPresentInJar(JerseyClientModuleProvider.class);
+    public void testAutoLoadable() {
+        BQModuleProviderChecker.testAutoLoadable(JerseyClientModuleProvider.class);
     }
 
     @Test

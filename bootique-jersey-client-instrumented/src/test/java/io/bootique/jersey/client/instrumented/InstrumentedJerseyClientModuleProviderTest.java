@@ -16,8 +16,8 @@ public class InstrumentedJerseyClientModuleProviderTest {
     public BQTestFactory testFactory = new BQTestFactory();
 
     @Test
-    public void testPresentInJar() {
-        BQModuleProviderChecker.testPresentInJar(InstrumentedJerseyClientModuleProvider.class);
+    public void testAutoLoadable() {
+        BQModuleProviderChecker.testAutoLoadable(InstrumentedJerseyClientModuleProvider.class);
     }
 
     @Test
