@@ -5,11 +5,10 @@ import io.bootique.jersey.client.JerseyClientModule;
 import io.bootique.metrics.MetricsModule;
 import io.bootique.metrics.health.HealthCheckModule;
 import io.bootique.test.junit.BQModuleProviderChecker;
+import io.bootique.test.junit.BQRuntimeChecker;
 import io.bootique.test.junit.BQTestFactory;
 import org.junit.Rule;
 import org.junit.Test;
-
-import static com.google.common.collect.ImmutableList.of;
 
 public class InstrumentedJerseyClientModuleProviderTest {
 
@@ -24,11 +23,11 @@ public class InstrumentedJerseyClientModuleProviderTest {
     @Test
     public void testModuleDeclaresDependencies() {
         final BQRuntime bqRuntime = testFactory.app().module(new InstrumentedJerseyClientModuleProvider()).createRuntime();
-        BQModuleProviderChecker.testModulesLoaded(bqRuntime, of(
+        BQRuntimeChecker.testModulesLoaded(bqRuntime,
                 JerseyClientModule.class,
                 InstrumentedJerseyClientModule.class,
                 MetricsModule.class,
                 HealthCheckModule.class
-        ));
+        );
     }
 }
