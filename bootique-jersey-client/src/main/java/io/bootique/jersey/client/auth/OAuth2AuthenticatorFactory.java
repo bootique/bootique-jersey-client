@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.inject.Injector;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
+import io.bootique.jersey.client.HttpClientBuilder;
 import io.bootique.jersey.client.HttpClientFactory;
 import org.glassfish.jersey.jackson.JacksonFeature;
 
@@ -22,6 +23,7 @@ import java.util.function.Function;
 public class OAuth2AuthenticatorFactory implements AuthenticatorFactory {
 
     protected String tokenUrl;
+    protected String tokenTrustStore;
     protected String username;
     protected String password;
     protected Duration expiresIn;
@@ -57,6 +59,15 @@ public class OAuth2AuthenticatorFactory implements AuthenticatorFactory {
         this.tokenUrl = tokenUrl;
     }
 
+    /**
+     * @param tokenTrustStore the name of the trust store, as mapped in Jersey Client configuration.
+     * @since 0.25
+     */
+    @BQConfigProperty("An optional name of a mapped trust store to use with when requesting a token.")
+    public void setTokenTrustStore(String tokenTrustStore) {
+        this.tokenTrustStore = tokenTrustStore;
+    }
+
     @BQConfigProperty("A duration value for default token expiration. Will only be used for oauth servers that do " +
             "not send 'expires_in' attribute explicitly. If not set, this value is 1 hr.")
     public void setExpiresIn(Duration expiresIn) {
@@ -75,13 +86,17 @@ public class OAuth2AuthenticatorFactory implements AuthenticatorFactory {
         Objects.requireNonNull(tokenUrl, "OAuth2 'tokenUrl' is not specified");
 
         // defer initialization until HttpClientFactory becomes available.
-        Function<String, WebTarget> tokenTargetFactory = tokenUrl -> injector
-                .getInstance(HttpClientFactory.class)
-                .newClient()
-                .register(JacksonFeature.class)
-                .target(tokenUrl);
-
+        Function<String, WebTarget> tokenTargetFactory = tokenUrl -> tokenTarget(tokenUrl, injector);
         return new OAuth2TokenDAO(tokenTargetFactory, tokenUrl, username, password, expiresIn);
     }
 
+    protected WebTarget tokenTarget(String tokenUrl, Injector injector) {
+        HttpClientBuilder builder = injector.getInstance(HttpClientFactory.class).newBuilder();
+
+        if (tokenTrustStore != null) {
+            builder = builder.trustStore(tokenTrustStore);
+        }
+
+        return builder.build().register(JacksonFeature.class).target(tokenUrl);
+    }
 }
