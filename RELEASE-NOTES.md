@@ -6,6 +6,7 @@
 * #27 OAuth2TokenAuthenticator must create its internal Client via HttpClientFactory
 * #28 Named truststores, Client builder
 * #29 Flip 'followRedirects' config default to true, clarify other defaults
+* #30 Upgrade to bootique-modules-parent 0.8
 
 ## 0.24
 
