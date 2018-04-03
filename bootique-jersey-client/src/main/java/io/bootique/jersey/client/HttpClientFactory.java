@@ -1,7 +1,5 @@
 package io.bootique.jersey.client;
 
-import io.bootique.jersey.client.auth.AuthenticatorFactory;
-
 import javax.ws.rs.client.Client;
 
 /**
@@ -27,21 +25,4 @@ public interface HttpClientFactory {
      * @since 0.25
      */
     HttpClientBuilder newBuilder();
-
-    /**
-     * Returns a new instance of JAX-RS HTTP client initialized using
-     * "jerseyclient" configuration subtree and associated with named
-     * authenticator.
-     *
-     * @return a new instance of JAX-RS HTTP client initialized using
-     * "jerseyclient" configuration subtree and associated with named
-     * authenticator.
-     * @see AuthenticatorFactory
-     * @since 0.2
-     * @deprecated since 0.25 in favor of "newClientBuilder().auth(authName).build()"
-     */
-    @Deprecated
-    default Client newAuthenticatedClient(String authName) {
-        return newBuilder().auth(authName).build();
-    }
 }

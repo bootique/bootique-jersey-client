@@ -13,32 +13,23 @@ import java.util.Map;
  */
 public class DefaultHttpClientFactory implements HttpClientFactory {
 
-    @Deprecated
-    KeyStore trustStore;
     private ClientConfig config;
     private Map<String, ClientRequestFilter> authFilters;
     private Map<String, KeyStore> trustStores;
 
     public DefaultHttpClientFactory(
             ClientConfig config,
-            // deprecated parameter...
-            KeyStore trustStore,
             Map<String, ClientRequestFilter> authFilters,
             Map<String, KeyStore> trustStores) {
 
         this.authFilters = authFilters;
         this.config = config;
-        this.trustStore = trustStore;
         this.trustStores = trustStores;
     }
 
     @Override
     public HttpClientBuilder newBuilder() {
         ClientBuilder builderDelegate = ClientBuilder.newBuilder().withConfig(config);
-
-        if (trustStore != null) {
-            builderDelegate.trustStore(trustStore);
-        }
 
         return new DefaultHttpClientBuilder(builderDelegate);
     }

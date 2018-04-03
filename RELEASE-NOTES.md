@@ -1,3 +1,7 @@
+## 0.26
+
+* #31 Cleaning up APIs deprecated since <= 0.25
+
 ## 0.25
 
 * #21 Implement token refresh capability for OAuth2 authentication

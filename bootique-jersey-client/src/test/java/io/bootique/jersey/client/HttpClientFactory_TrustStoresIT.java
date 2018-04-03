@@ -16,7 +16,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class HttpClientFactory_TrustStoresIT {
 
@@ -36,26 +35,6 @@ public class HttpClientFactory_TrustStoresIT {
                 .module(new LogbackModuleProvider())
                 .module(b -> JerseyModule.extend(b).addResource(Resource.class))
                 .run();
-    }
-
-    /**
-     * @deprecated Corresponding config is deprecated since 0.25, but we still allow it to function.
-     */
-    @Test
-    @Deprecated
-    public void testDefaultTrustStore() {
-
-        HttpClientFactory factory = clientFactory
-                .app("-c", "classpath:io/bootique/jersey/client/TrustStoresIT_client_deprecated.yml")
-                .module(new JerseyClientModuleProvider())
-                .module(new LogbackModuleProvider())
-                .createRuntime()
-                .getInstance(HttpClientFactory.class);
-
-        assertNotNull(((DefaultHttpClientFactory) factory).trustStore);
-
-        Response response = factory.newClient().target(SERVICE_URL).request().get();
-        Resource.assertResponse(response);
     }
 
     @Test

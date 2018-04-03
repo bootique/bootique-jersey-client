@@ -35,7 +35,7 @@ public class DefaultHttpClientFactoryTest {
 
         config.property("x", "y");
 
-        DefaultHttpClientFactory factory = new DefaultHttpClientFactory(config, null, Collections.emptyMap(), Collections.emptyMap());
+        DefaultHttpClientFactory factory = new DefaultHttpClientFactory(config, Collections.emptyMap(), Collections.emptyMap());
         Client c = factory.newClient();
         assertNotNull(c);
 
@@ -47,7 +47,6 @@ public class DefaultHttpClientFactoryTest {
 
         DefaultHttpClientFactory factory = new DefaultHttpClientFactory(
                 config,
-                null,
                 Collections.emptyMap(),
                 Collections.emptyMap());
 
@@ -65,7 +64,7 @@ public class DefaultHttpClientFactoryTest {
         authFilters.put("one", mockAuth1);
         authFilters.put("two", mockAuth2);
 
-        DefaultHttpClientFactory factory = new DefaultHttpClientFactory(config, null, authFilters, Collections.emptyMap());
+        DefaultHttpClientFactory factory = new DefaultHttpClientFactory(config, authFilters, Collections.emptyMap());
         Client c = factory.newBuilder().auth("one").build();
         assertNotNull(c);
 
@@ -83,7 +82,7 @@ public class DefaultHttpClientFactoryTest {
         authFilters.put("one", mockAuth1);
         authFilters.put("two", mockAuth2);
 
-        DefaultHttpClientFactory factory = new DefaultHttpClientFactory(config, null, authFilters, Collections.emptyMap());
+        DefaultHttpClientFactory factory = new DefaultHttpClientFactory(config, authFilters, Collections.emptyMap());
         factory.newBuilder().auth("three");
     }
 }

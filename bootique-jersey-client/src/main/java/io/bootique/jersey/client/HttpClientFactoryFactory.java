@@ -5,7 +5,6 @@ import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.jersey.client.auth.AuthenticatorFactory;
 import io.bootique.jersey.client.log.JULSlf4jLogger;
-import io.bootique.resource.ResourceFactory;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.filter.EncodingFeature;
@@ -27,59 +26,18 @@ import java.util.function.Supplier;
 @BQConfig("Configures HttpClientFactory, including named authenticators, timeouts, SSL certificates, etc.")
 public class HttpClientFactoryFactory {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HttpClientFactoryFactory.class);
-
     boolean followRedirects;
     boolean compression;
     int readTimeoutMs;
     int connectTimeoutMs;
     int asyncThreadPoolSize;
     Map<String, AuthenticatorFactory> auth;
-
-    @Deprecated
-    TrustStoreFactory defaultTrustStore;
-
     Map<String, TrustStoreFactory> trustStores;
     Map<String, WebTargetFactory> targets;
 
     public HttpClientFactoryFactory() {
         this.followRedirects = true;
         this.compression = true;
-    }
-
-    /**
-     * Sets trust store location for clients that need to accept server certificates not known to the JVM.
-     *
-     * @param trustStore a resource URL pointing to the location of truststore.
-     * @since 0.7
-     * @deprecated since 0.25 in favor of named trust stores.
-     */
-    @BQConfigProperty("@Deprecated: use 'trustStores.[name].location'. Optional resource URL specifying the location of the " +
-            "trust store that keeps SSL certificates for the known servers.")
-    @Deprecated
-    public void setTrustStore(ResourceFactory trustStore) {
-
-        LOGGER.warn("** Use of deprecated 'trustStore' property. Consider configuring named trust stores. " +
-                "For more details see https://github.com/bootique/bootique-jersey-client/issues/28");
-
-        getOrCreateDefaultTrustStoreFactory().setLocation(trustStore);
-    }
-
-    /**
-     * Sets trust store password. Default is "changeit".
-     *
-     * @param trustStorePassword trust store password.
-     * @deprecated since 0.25 in favor of named trust stores.
-     */
-    @Deprecated
-    @BQConfigProperty("@Deprecated: use 'trustStores.[name].password'. Password for the store specified via 'trustStore' " +
-            "property. In the best Java tradition, the default is 'changeit'.")
-    public void setTrustStorePassword(String trustStorePassword) {
-
-        LOGGER.warn("** Use of deprecated 'trustStorePassword' property. Consider configuring named trust stores. " +
-                "For more details see https://github.com/bootique/bootique-jersey-client/issues/28");
-
-        getOrCreateDefaultTrustStoreFactory().setPassword(trustStorePassword);
     }
 
     /**
@@ -161,23 +119,10 @@ public class HttpClientFactoryFactory {
         // register Guice Injector as a service in Jersey HK2, and GuiceBridgeFeature as a client Feature
         ClientGuiceBridgeFeature.register(config, injector);
 
-        // deprecated...
-        KeyStore defaultTrustStoreResolved = defaultTrustStore != null ? defaultTrustStore.createTrustStore() : null;
-
         return new DefaultHttpClientFactory(
                 config,
-                defaultTrustStoreResolved,
                 createAuthFilters(injector),
                 createTrustStores());
-    }
-
-    @Deprecated
-    private TrustStoreFactory getOrCreateDefaultTrustStoreFactory() {
-        if (defaultTrustStore == null) {
-            defaultTrustStore = new TrustStoreFactory();
-        }
-
-        return defaultTrustStore;
     }
 
     protected Map<String, KeyStore> createTrustStores() {
