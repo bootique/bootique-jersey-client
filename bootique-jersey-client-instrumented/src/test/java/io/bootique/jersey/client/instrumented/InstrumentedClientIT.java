@@ -6,11 +6,8 @@ import com.google.inject.Module;
 import io.bootique.BQRuntime;
 import io.bootique.jersey.JerseyModule;
 import io.bootique.jersey.client.HttpClientFactory;
-import io.bootique.jersey.client.JerseyClientModule;
 import io.bootique.jetty.JettyModule;
-import io.bootique.metrics.MetricsModule;
 import io.bootique.test.junit.BQTestFactory;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -57,15 +54,9 @@ public class InstrumentedClientIT {
     public void before() {
         this.app = clientFactory
                 .app()
-                .modules(JerseyClientInstrumentedModule.class, JerseyClientModule.class, MetricsModule.class)
+                .autoLoadModules()
                 .createRuntime();
     }
-
-    @After
-    public void after() {
-        app.shutdown();
-    }
-
 
     @Test
     public void testMetrics() {
