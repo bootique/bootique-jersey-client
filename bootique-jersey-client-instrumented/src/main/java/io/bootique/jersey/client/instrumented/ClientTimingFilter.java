@@ -21,7 +21,7 @@ public class ClientTimingFilter implements ClientRequestFilter, ClientResponseFi
 	private Timer requestTimer;
 
 	public ClientTimingFilter(MetricRegistry metricRegistry) {
-		String name = MetricNaming.name(JerseyClientInstrumentedModule.class, "Client", "RequestTimer");
+		String name = MetricNaming.forModule(JerseyClientInstrumentedModule.class).name("Client", "RequestTimer");
 		this.requestTimer = metricRegistry.timer(name);
 	}
 
