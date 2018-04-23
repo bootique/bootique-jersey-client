@@ -10,22 +10,22 @@ import io.bootique.test.junit.BQTestFactory;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class InstrumentedJerseyClientModuleProviderTest {
+public class JerseyClientInstrumentedModuleProviderTest {
 
     @Rule
     public BQTestFactory testFactory = new BQTestFactory();
 
     @Test
     public void testAutoLoadable() {
-        BQModuleProviderChecker.testAutoLoadable(InstrumentedJerseyClientModuleProvider.class);
+        BQModuleProviderChecker.testAutoLoadable(JerseyClientInstrumentedModuleProvider.class);
     }
 
     @Test
     public void testModuleDeclaresDependencies() {
-        final BQRuntime bqRuntime = testFactory.app().module(new InstrumentedJerseyClientModuleProvider()).createRuntime();
+        final BQRuntime bqRuntime = testFactory.app().module(new JerseyClientInstrumentedModuleProvider()).createRuntime();
         BQRuntimeChecker.testModulesLoaded(bqRuntime,
                 JerseyClientModule.class,
-                InstrumentedJerseyClientModule.class,
+                JerseyClientInstrumentedModule.class,
                 MetricsModule.class,
                 HealthCheckModule.class
         );

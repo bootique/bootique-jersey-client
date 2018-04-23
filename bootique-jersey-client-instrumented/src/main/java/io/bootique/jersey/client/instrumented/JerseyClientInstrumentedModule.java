@@ -7,7 +7,7 @@ import com.google.inject.Singleton;
 import io.bootique.ConfigModule;
 import io.bootique.jersey.client.JerseyClientModule;
 
-public class InstrumentedJerseyClientModule extends ConfigModule {
+public class JerseyClientInstrumentedModule extends ConfigModule {
 
     @Override
     public void configure(Binder binder) {

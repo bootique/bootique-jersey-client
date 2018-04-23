@@ -12,11 +12,11 @@ import java.util.Collections;
 
 import static java.util.Arrays.asList;
 
-public class InstrumentedJerseyClientModuleProvider implements BQModuleProvider {
+public class JerseyClientInstrumentedModuleProvider implements BQModuleProvider {
 
     @Override
     public Module module() {
-        return new InstrumentedJerseyClientModule();
+        return new JerseyClientInstrumentedModule();
     }
 
     @Override

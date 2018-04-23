@@ -26,7 +26,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -54,13 +57,26 @@ public class InstrumentedClientIT {
     public void before() {
         this.app = clientFactory
                 .app()
-                .modules(InstrumentedJerseyClientModule.class, JerseyClientModule.class, MetricsModule.class)
+                .modules(JerseyClientInstrumentedModule.class, JerseyClientModule.class, MetricsModule.class)
                 .createRuntime();
     }
 
     @After
     public void after() {
         app.shutdown();
+    }
+
+
+    @Test
+    public void testMetrics() {
+
+        // fault filter to init metrics
+        app.getInstance(ClientTimingFilter.class);
+
+        MetricRegistry metricRegistry = app.getInstance(MetricRegistry.class);
+
+        Set<String> expectedTimers = new HashSet<>(asList("bq.JerseyClient.Client.RequestTimer"));
+        assertEquals(expectedTimers, metricRegistry.getTimers().keySet());
     }
 
     @Test
