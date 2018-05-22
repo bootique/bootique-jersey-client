@@ -29,7 +29,7 @@ public class ClientTimingFilter extends RequestLoggingFilter {
 		Timer.Context requestTimerContext = requestTimer.time();
 		requestContext.setProperty(TIMER_PROPERTY, requestTimerContext);
 
-		LOGGER.info("Client request started");
+		LOGGER.debug("Client request started");
 
 		// note that response filter method may not be called at all if the
 		// request results in connection exception, etc... Would be nice to
@@ -47,6 +47,6 @@ public class ClientTimingFilter extends RequestLoggingFilter {
 		long timeNanos = requestTimerContext.stop();
 
 		logMessage.append(" time: ").append(timeNanos / 1000000).append(" ms.");
-		LOGGER.info(logMessage.toString());
+		LOGGER.debug(logMessage.toString());
 	}
 }

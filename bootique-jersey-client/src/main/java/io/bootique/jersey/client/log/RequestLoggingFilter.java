@@ -25,14 +25,14 @@ public class RequestLoggingFilter implements  ClientRequestFilter, ClientRespons
         sb.append("Sending client request on thread ").append(Thread.currentThread().getName())
                 .append("\n").append(REQUEST_PREFIX).append(requestContext.getMethod()).append(" ")
                 .append(requestContext.getUri().toASCIIString()).append("\n");
-        LOGGER.info(sb.toString());
+        LOGGER.debug(sb.toString());
     }
 
     @Override
     public void filter(final ClientRequestContext requestContext, final ClientResponseContext responseContext) {
 
         final StringBuilder logMessage = getResponseMessage(requestContext, responseContext);
-        LOGGER.info(logMessage.toString());
+        LOGGER.debug(logMessage.toString());
     }
 
     protected StringBuilder getResponseMessage(final ClientRequestContext requestContext, final ClientResponseContext responseContext) {
