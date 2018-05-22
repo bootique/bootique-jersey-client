@@ -4,11 +4,11 @@ import com.google.inject.Injector;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.jersey.client.auth.AuthenticatorFactory;
+import io.bootique.jersey.client.log.RequestLoggingFilter;
 import io.bootique.jersey.client.log.JULSlf4jLogger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.filter.EncodingFeature;
-import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.message.GZipEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -168,9 +168,8 @@ public class HttpClientFactoryFactory {
 
         Logger logger = LoggerFactory.getLogger(HttpClientFactory.class);
         if (logger.isDebugEnabled()) {
-
             JULSlf4jLogger julWrapper = new JULSlf4jLogger(HttpClientFactoryFactory.class.getName(), logger);
-            LoggingFilter logFilter = new LoggingFilter(julWrapper, false);
+            RequestLoggingFilter logFilter = new RequestLoggingFilter(julWrapper);
             config.register(logFilter);
         }
     }
