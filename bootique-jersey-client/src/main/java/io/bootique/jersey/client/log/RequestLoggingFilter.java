@@ -1,5 +1,8 @@
 package io.bootique.jersey.client.log;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.client.ClientResponseContext;
@@ -7,21 +10,13 @@ import javax.ws.rs.client.ClientResponseFilter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.logging.Logger;
 
 public class RequestLoggingFilter implements  ClientRequestFilter, ClientResponseFilter {
 
     private static final String REQUEST_PREFIX = "> ";
     private static final String PATTERN = "dd/MMM/yyyy:HH:mm:ss";
 
-    private Logger logger;
-
-    public RequestLoggingFilter() {
-    }
-
-    public RequestLoggingFilter(final Logger logger) {
-        this.logger = logger;
-    }
+    private static final Logger LOGGER = LoggerFactory.getLogger(RequestLoggingFilter.class);
 
     @Override
     public void filter(final ClientRequestContext requestContext) throws IOException {
@@ -30,14 +25,14 @@ public class RequestLoggingFilter implements  ClientRequestFilter, ClientRespons
         sb.append("Sending client request on thread ").append(Thread.currentThread().getName())
                 .append("\n").append(REQUEST_PREFIX).append(requestContext.getMethod()).append(" ")
                 .append(requestContext.getUri().toASCIIString()).append("\n");
-        log(sb);
+        LOGGER.info(sb.toString());
     }
 
     @Override
     public void filter(final ClientRequestContext requestContext, final ClientResponseContext responseContext) {
 
         final StringBuilder logMessage = getResponseMessage(requestContext, responseContext);
-        log(logMessage);
+        LOGGER.info(logMessage.toString());
     }
 
     protected StringBuilder getResponseMessage(final ClientRequestContext requestContext, final ClientResponseContext responseContext) {
@@ -52,9 +47,5 @@ public class RequestLoggingFilter implements  ClientRequestFilter, ClientRespons
         return sb;
     }
 
-    private void log(final StringBuilder b) {
-        if (logger != null) {
-            logger.info(b.toString());
-        }
-    }
+
 }

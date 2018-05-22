@@ -5,7 +5,6 @@ import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.jersey.client.auth.AuthenticatorFactory;
 import io.bootique.jersey.client.log.RequestLoggingFilter;
-import io.bootique.jersey.client.log.JULSlf4jLogger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.filter.EncodingFeature;
@@ -166,10 +165,9 @@ public class HttpClientFactoryFactory {
 
     protected void configRequestLogging(ClientConfig config) {
 
-        Logger logger = LoggerFactory.getLogger(HttpClientFactory.class);
+        Logger logger = LoggerFactory.getLogger(RequestLoggingFilter.class);
         if (logger.isDebugEnabled()) {
-            JULSlf4jLogger julWrapper = new JULSlf4jLogger(HttpClientFactoryFactory.class.getName(), logger);
-            RequestLoggingFilter logFilter = new RequestLoggingFilter(julWrapper);
+            RequestLoggingFilter logFilter = new RequestLoggingFilter();
             config.register(logFilter);
         }
     }
