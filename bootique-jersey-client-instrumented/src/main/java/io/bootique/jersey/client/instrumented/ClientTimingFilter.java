@@ -2,6 +2,7 @@ package io.bootique.jersey.client.instrumented;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
+import io.bootique.metrics.MetricNaming;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +17,7 @@ public class ClientTimingFilter implements ClientRequestFilter, ClientResponseFi
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ClientTimingFilter.class);
 	private static final String TIMER_PROPERTY = ClientTimingFilter.class.getName() + ".timer";
-	public static final String TIMER_NAME = MetricRegistry.name(InstrumentedFeature.class, "client-request-timer");
+	public static final String TIMER_NAME = MetricNaming.forModule(JerseyClientInstrumentedModule.class).name("Client", "RequestTimer");;
 
 	private Timer requestTimer;
 
