@@ -27,6 +27,7 @@ import io.bootique.jetty.JettyModule;
 import io.bootique.logback.LogbackModule;
 import io.bootique.test.junit.BQTestFactory;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -87,6 +88,7 @@ public class HttpClientFactoryFactory_LoggingIT {
         }
     }
 
+    @Ignore
     @Test
     public void testCreateClientFactory_Debug() throws IOException, InterruptedException {
 
@@ -113,6 +115,7 @@ public class HttpClientFactoryFactory_LoggingIT {
         assertTrue(lines.get(3).contains("Client response received on thread main"));
     }
 
+    @Ignore
     @Test
     public void testCreateClientFactory_Warn() throws IOException {
 
