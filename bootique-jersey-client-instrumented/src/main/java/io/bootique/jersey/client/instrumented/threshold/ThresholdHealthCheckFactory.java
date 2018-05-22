@@ -31,16 +31,13 @@ public class ThresholdHealthCheckFactory {
         this.timeRequestsThresholds = timeRequestsThresholds;
     }
 
-    public RangeHealthCheck createThresholdHealthCheck() {
-        return new RangeHealthCheck(createTimeRequestsCheck(getMetricRegistry()));
-    }
 
     public MetricRegistry getMetricRegistry() {
         return metricRegistry;
     }
 
-    private HealthCheck createTimeRequestsCheck(MetricRegistry registry) {
-        Supplier<Double> deferredGauge = valueFromGauge(registry, MetricNaming.forModule(JerseyClientInstrumentedModule.class).name("Client", "RequestTimer"));
+    public HealthCheck createTimeRequestsCheck() {
+        Supplier<Double> deferredGauge = valueFromGauge(getMetricRegistry(), MetricNaming.forModule(JerseyClientInstrumentedModule.class).name("Client", "RequestTimer"));
 
         ValueRange<Double> range = getTimeRequestsThresholds();
         return new ValueRangeCheck<>(range, deferredGauge);

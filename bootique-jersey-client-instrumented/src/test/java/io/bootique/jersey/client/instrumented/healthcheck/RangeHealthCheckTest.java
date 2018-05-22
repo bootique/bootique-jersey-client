@@ -3,9 +3,9 @@ package io.bootique.jersey.client.instrumented.healthcheck;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import io.bootique.jersey.client.instrumented.JerseyClientInstrumentedModule;
-import io.bootique.jersey.client.instrumented.threshold.RangeHealthCheck;
 import io.bootique.jersey.client.instrumented.threshold.ThresholdHealthCheckFactory;
 import io.bootique.metrics.MetricNaming;
+import io.bootique.metrics.health.HealthCheck;
 import io.bootique.metrics.health.HealthCheckOutcome;
 import io.bootique.metrics.health.HealthCheckRegistry;
 import io.bootique.metrics.health.check.DoubleRangeFactory;
@@ -40,7 +40,7 @@ public class RangeHealthCheckTest {
         when(registry.timer(MetricNaming.forModule(JerseyClientInstrumentedModule.class).name("Client", "RequestTimer")))
                 .thenReturn(mock(Timer.class));
 
-        RangeHealthCheck rangeHealthCheck = healthCheckFactory.createThresholdHealthCheck();
+        HealthCheck rangeHealthCheck = healthCheckFactory.createTimeRequestsCheck();
         Map healthChecks = new HashMap();
         healthChecks.put("test", rangeHealthCheck);
         this.healthCheckRegistry = new HealthCheckRegistry(healthChecks);
