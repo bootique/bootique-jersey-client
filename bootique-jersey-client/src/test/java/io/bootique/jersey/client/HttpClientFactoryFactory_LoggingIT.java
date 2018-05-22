@@ -88,7 +88,7 @@ public class HttpClientFactoryFactory_LoggingIT {
 
         File log = new File(logsDir, "debug.log");
         List<String> lines = Files.readAllLines(log.toPath());
-        assertEquals(lines.stream().collect(joining("\n")), 11, lines.size());
+        assertEquals(lines.stream().collect(joining("\n")), 4, lines.size());
         assertTrue(lines.get(0).contains("Sending client request on thread main"));
         assertTrue(lines.get(1).contains("GET http://127.0.0.1:8080/get"));
         assertTrue(lines.get(3).contains("Client response received on thread main"));

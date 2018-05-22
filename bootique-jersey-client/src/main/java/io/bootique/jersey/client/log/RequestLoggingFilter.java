@@ -44,7 +44,8 @@ public class RequestLoggingFilter implements  ClientRequestFilter, ClientRespons
 
         final StringBuilder sb = new StringBuilder();
         sb.append("[").append(LocalDateTime.now().format(DateTimeFormatter.ofPattern(PATTERN))).append("] ")
-                .append("\"").append(requestContext.getMethod()).append(" ")
+                .append(" Client response received on thread ").append(Thread.currentThread().getName())
+                .append(" \"").append(requestContext.getMethod()).append(" ")
                 .append(requestContext.getUri().getAuthority()).append(requestContext.getUri().getPath())
                 .append("\" ").append(" Status: ").append(responseContext.getStatus());
 
