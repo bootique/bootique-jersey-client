@@ -39,14 +39,14 @@ public class ClientTimingFilter extends RequestLoggingFilter {
 
 	@Override
 	public void filter(ClientRequestContext requestContext, ClientResponseContext responseContext) {
-		StringBuilder logMessage = getResponseMessage(requestContext);
+		StringBuilder logMessage = getResponseMessage(requestContext, responseContext);
 		Timer.Context requestTimerContext = (Timer.Context) requestContext.getProperty(TIMER_PROPERTY);
 
 		// TODO: this timing does not take into account reading response
 		// content... May need to add additional interceptor for that.
 		long timeNanos = requestTimerContext.stop();
 
-		logMessage.append("time: ").append(timeNanos / 1000000).append(" ms.").append(" Status: ").append(responseContext.getStatus());
+		logMessage.append(" time: ").append(timeNanos / 1000000).append(" ms.");
 		LOGGER.info(logMessage.toString());
 	}
 }

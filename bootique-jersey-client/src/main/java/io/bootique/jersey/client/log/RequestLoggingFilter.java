@@ -36,17 +36,17 @@ public class RequestLoggingFilter implements  ClientRequestFilter, ClientRespons
     @Override
     public void filter(final ClientRequestContext requestContext, final ClientResponseContext responseContext) {
 
-        final StringBuilder logMessage = getResponseMessage(requestContext);
+        final StringBuilder logMessage = getResponseMessage(requestContext, responseContext);
         log(logMessage);
     }
 
-    protected StringBuilder getResponseMessage(final ClientRequestContext requestContext) {
+    protected StringBuilder getResponseMessage(final ClientRequestContext requestContext, final ClientResponseContext responseContext) {
 
         final StringBuilder sb = new StringBuilder();
         sb.append("[").append(LocalDateTime.now().format(DateTimeFormatter.ofPattern(PATTERN))).append("] ")
                 .append("\"").append(requestContext.getMethod()).append(" ")
                 .append(requestContext.getUri().getAuthority()).append(requestContext.getUri().getPath())
-                .append("\" ");
+                .append("\" ").append(" Status: ").append(responseContext.getStatus());
 
         return sb;
     }
