@@ -24,13 +24,7 @@ public class ThresholdHealthCheckFactory {
             .METRIC_NAMING
             .name("Threshold", "Requests");
 
-
     private DoubleRangeFactory timeRequestsThresholds;
-    private MetricRegistry metricRegistry;
-
-    public ThresholdHealthCheckFactory initMetricRegistry() {
-        return this;
-    }
 
     @BQConfigProperty
     public void setTimeRequestsThresholds(DoubleRangeFactory timeRequestsThresholds) {
@@ -38,13 +32,7 @@ public class ThresholdHealthCheckFactory {
     }
 
     public JerseyHealthChecks createThresholdHealthCheck(MetricRegistry metricRegistry) {
-        this.metricRegistry = metricRegistry;
-
-        return new JerseyHealthChecks(createHealthChecksMap(getMetricRegistry()));
-    }
-
-    public MetricRegistry getMetricRegistry() {
-        return metricRegistry;
+        return new JerseyHealthChecks(createHealthChecksMap(metricRegistry));
     }
 
     private HealthCheck createTimeRequestsCheck(MetricRegistry registry) {

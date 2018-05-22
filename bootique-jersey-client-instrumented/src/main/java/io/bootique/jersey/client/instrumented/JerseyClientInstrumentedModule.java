@@ -43,7 +43,7 @@ public class JerseyClientInstrumentedModule extends ConfigModule {
 
     @Provides
     ThresholdHealthCheckFactory providerThresholdHealthCheckFactory(ConfigurationFactory configFactory) {
-        return configFactory.config(ThresholdHealthCheckFactory.class, configPrefix).initMetricRegistry();
+        return configFactory.config(ThresholdHealthCheckFactory.class, configPrefix);
     }
 
     @Provides

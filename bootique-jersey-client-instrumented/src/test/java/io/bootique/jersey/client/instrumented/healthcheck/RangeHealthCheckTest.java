@@ -33,7 +33,7 @@ public class RangeHealthCheckTest {
 
         Mockito.when(registry.timer(ClientTimingFilter.TIMER_NAME)).thenReturn(Mockito.mock(Timer.class));
 
-        JerseyHealthChecks rangeHealthCheck = healthCheckFactory.initMetricRegistry().createThresholdHealthCheck(registry);
+        JerseyHealthChecks rangeHealthCheck = healthCheckFactory.createThresholdHealthCheck(registry);
         this.healthCheckRegistry = new HealthCheckRegistry(rangeHealthCheck.getHealthChecks());
     }
 
