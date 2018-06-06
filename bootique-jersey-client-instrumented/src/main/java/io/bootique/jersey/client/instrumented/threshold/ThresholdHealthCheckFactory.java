@@ -4,7 +4,7 @@ import com.codahale.metrics.MetricRegistry;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.jersey.client.instrumented.ClientTimingFilter;
-import io.bootique.jersey.client.instrumented.InstrumentedJerseyClientModule;
+import io.bootique.jersey.client.instrumented.JerseyClientInstrumentedModule;
 import io.bootique.metrics.health.HealthCheck;
 import io.bootique.metrics.health.check.DoubleRangeFactory;
 import io.bootique.metrics.health.check.ValueRange;
@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 @BQConfig
 public class ThresholdHealthCheckFactory {
 
-    public static final String THRESHOLD_REQUESTS_CHECK =  InstrumentedJerseyClientModule
+    public static final String THRESHOLD_REQUESTS_CHECK =  JerseyClientInstrumentedModule
             .METRIC_NAMING
             .name("Threshold", "Requests");
 
