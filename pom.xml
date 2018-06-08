@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.bootique.modules.parent</groupId>
         <artifactId>bootique-modules-parent</artifactId>
-        <version>0.8</version>
+        <version>0.10</version>
     </parent>
 
     <groupId>io.bootique.jersey.client</groupId>
@@ -13,9 +13,7 @@
     <packaging>pom</packaging>
 
     <name>bootique-jersey-client-parent: Parent of HTTP client integrated with Bootique, built on top of Jersey.</name>
-    <description>
-        Parent POM of An HTTP client Bootique integration.
-    </description>
+    <description>Parent POM of An HTTP client Bootique integration.</description>
 
     <modules>
         <module>bootique-jersey-client</module>
@@ -23,11 +21,9 @@
     </modules>
 
     <properties>
-        <bootique-version>${project.version}</bootique-version>
-        <jersey-version>2.21</jersey-version>
-        <jackson-jaxrs-version>2.9.5</jackson-jaxrs-version>
+        <bootique.version>${project.version}</bootique.version>
         <!-- Must be coordinated with Jersey version. managing manually due to SLF4J version conflict -->
-        <grizzly-http-client-version>1.9</grizzly-http-client-version>
+        <grizzly.http.client.version>1.9</grizzly.http.client.version>
     </properties>
 
     <scm>
@@ -49,32 +45,32 @@
             <dependency>
                 <groupId>io.bootique</groupId>
                 <artifactId>bootique</artifactId>
-                <version>${bootique-version}</version>
+                <version>${bootique.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.bootique</groupId>
                 <artifactId>bootique-test</artifactId>
-                <version>${bootique-version}</version>
+                <version>${bootique.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.bootique.jersey</groupId>
                 <artifactId>bootique-jersey</artifactId>
-                <version>${bootique-version}</version>
+                <version>${bootique.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.glassfish.jersey.core</groupId>
                 <artifactId>jersey-client</artifactId>
-                <version>${jersey-version}</version>
+                <version>${jersey.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.glassfish.jersey.connectors</groupId>
                 <artifactId>jersey-grizzly-connector</artifactId>
-                <version>${jersey-version}</version>
+                <version>${jersey.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.glassfish.grizzly</groupId>
                 <artifactId>grizzly-http-client</artifactId>
-                <version>${grizzly-http-client-version}</version>
+                <version>${grizzly.http.client.version}</version>
                 <!-- Must exclude their old SLF.. Why is this module evene dependent on SLF?
                 None of the Jersey libs are..-->
                 <exclusions>
@@ -87,17 +83,17 @@
             <dependency>
                 <groupId>io.bootique.metrics</groupId>
                 <artifactId>bootique-metrics</artifactId>
-                <version>${bootique-version}</version>
+                <version>${bootique.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.bootique.metrics</groupId>
                 <artifactId>bootique-metrics-healthchecks</artifactId>
-                <version>${bootique-version}</version>
+                <version>${bootique.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.bootique.logback</groupId>
                 <artifactId>bootique-logback</artifactId>
-                <version>${bootique-version}</version>
+                <version>${bootique.version}</version>
             </dependency>
 
             <!-- This modules imports lots of Jackson-related stuff, whose versions
@@ -106,7 +102,7 @@
             <dependency>
                 <groupId>org.glassfish.jersey.media</groupId>
                 <artifactId>jersey-media-json-jackson</artifactId>
-                <version>${jersey-version}</version>
+                <version>${jersey.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.fasterxml.jackson.jaxrs</groupId>
@@ -121,21 +117,6 @@
                         <artifactId>jackson-annotations</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.jaxrs</groupId>
-                <artifactId>jackson-jaxrs-base</artifactId>
-                <version>${jackson-jaxrs-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.jaxrs</groupId>
-                <artifactId>jackson-jaxrs-json-provider</artifactId>
-                <version>${jackson-jaxrs-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-simple</artifactId>
-                <version>${slf4j.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
