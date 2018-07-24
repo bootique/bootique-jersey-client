@@ -3,6 +3,7 @@
 * #31 Cleaning up APIs deprecated since <= 0.25
 * #32 Update Jackson to 2.9.5
 * #33 Metrics renaming to follow naming convention
+* #39 Upgrading Jersey to 2.27
 
 ## 0.25
 
