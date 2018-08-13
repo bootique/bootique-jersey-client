@@ -62,8 +62,8 @@ public class BasicAuthenticatorFactory implements AuthenticatorFactory {
 	
 	@Override
 	public ClientRequestFilter createAuthFilter(Injector injector) {
-		Objects.requireNonNull(username);
-		Objects.requireNonNull(password);
+		Objects.requireNonNull(username, "BASIC 'username' is null");
+		Objects.requireNonNull(password, "BASIC 'password' is null");
 
 		return new BasicAuthenticator(username, password);
 	}
