@@ -20,5 +20,5 @@ log:
       level: debug
   appenders:
     - type: file
-      logFormat: '%c{20}: %m%n'
+      logFormat: '%c{20}: [%d{dd/MMM/yyyy:HH:mm:ss}] %m%n'
       file: target/logback/debug.log
