@@ -27,7 +27,6 @@ import io.bootique.jetty.JettyModule;
 import io.bootique.logback.LogbackModule;
 import io.bootique.test.junit.BQTestFactory;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -88,7 +87,6 @@ public class HttpClientFactoryFactory_LoggingIT {
         }
     }
 
-    @Ignore
     @Test
     public void testCreateClientFactory_Debug() throws IOException, InterruptedException {
 
@@ -109,13 +107,12 @@ public class HttpClientFactoryFactory_LoggingIT {
 
         File log = new File(logsDir, "debug.log");
         List<String> lines = Files.readAllLines(log.toPath());
-        assertEquals(lines.stream().collect(joining("\n")), 5, lines.size());
-        assertTrue(lines.get(3).contains("GET http://127.0.0.1:8080/get"));
+        assertEquals(lines.stream().collect(joining("\n")), 3, lines.size());
+        assertTrue(lines.get(1).contains("GET http://127.0.0.1:8080/get"));
     }
 
-    @Ignore
     @Test
-    public void testCreateClientFactory_Warn() throws IOException {
+    public void testCreateClientFactory_Warn() throws IOException, InterruptedException {
 
         startApp("warn.yml");
 
@@ -127,9 +124,14 @@ public class HttpClientFactoryFactory_LoggingIT {
         assertEquals(Status.OK.getStatusCode(), r.getStatus());
         assertEquals("got", r.readEntity(String.class));
 
+        // wait for the log file to be flushed... there seems to be a race
+        // condition in CI, resulting in assertions below not seeing the full
+        // log
+        Thread.sleep(500);
+
         File log = new File(logsDir, "warn.log");
         List<String> lines = Files.readAllLines(log.toPath());
-        assertEquals(Collections.emptyList(), lines);
+        assertEquals(0, lines.size());
     }
 
     @Path("/")

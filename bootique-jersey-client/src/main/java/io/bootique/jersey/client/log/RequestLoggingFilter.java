@@ -14,25 +14,35 @@ public class RequestLoggingFilter implements  ClientRequestFilter, ClientRespons
 
     @Override
     public void filter(final ClientRequestContext requestContext) throws IOException {
+
+        if (!LOGGER.isInfoEnabled()) {
+            return;
+        }
+
         final StringBuilder sb = new StringBuilder();
         sb.append("Sending client request.")
                 .append("\n").append(REQUEST_PREFIX).append(requestContext.getMethod()).append(" ")
-                .append(requestContext.getUri().toASCIIString()).append("\n");
-        LOGGER.debug(sb.toString());
+                .append(requestContext.getUri().toASCIIString());
+        LOGGER.info(sb.toString());
     }
 
     @Override
     public void filter(final ClientRequestContext requestContext, final ClientResponseContext responseContext) {
+        if (!LOGGER.isInfoEnabled()) {
+            return;
+        }
+
         final StringBuilder logMessage = getResponseMessage(requestContext, responseContext);
         LOGGER.info(logMessage.toString());
     }
 
     protected StringBuilder getResponseMessage(final ClientRequestContext requestContext, final ClientResponseContext responseContext) {
         final StringBuilder sb = new StringBuilder();
+
         sb.append(" Client response received.")
-                .append(" \"").append(requestContext.getMethod()).append(" ")
-                .append(requestContext.getUri().getAuthority()).append(requestContext.getUri().getPath())
-                .append("\" ").append(" Status: ").append(responseContext.getStatus());
+            .append(" \"").append(requestContext.getMethod()).append(" ")
+            .append(requestContext.getUri().getAuthority()).append(requestContext.getUri().getPath())
+            .append("\" ").append(" Status: ").append(responseContext.getStatus());
         return sb;
     }
 }
