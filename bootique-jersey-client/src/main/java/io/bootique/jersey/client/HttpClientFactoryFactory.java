@@ -24,16 +24,13 @@ import com.google.inject.Injector;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.jersey.client.auth.AuthenticatorFactory;
-import io.bootique.jersey.client.log.JULSlf4jLogger;
+import io.bootique.jersey.client.log.RequestLoggingFilter;
 import org.glassfish.hk2.api.InjectionResolver;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.filter.EncodingFeature;
 import org.glassfish.jersey.internal.inject.AbstractBinder;
-import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.message.GZipEncoder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.client.WebTarget;
@@ -197,14 +194,8 @@ public class HttpClientFactoryFactory {
 
     protected void configRequestLogging(ClientConfig config) {
 
-        Logger logger = LoggerFactory.getLogger(HttpClientFactory.class);
-        if (logger.isDebugEnabled()) {
-
-            JULSlf4jLogger julWrapper = new JULSlf4jLogger(HttpClientFactoryFactory.class.getName(), logger);
-
-            LoggingFeature loggingFeature = new LoggingFeature(julWrapper);
-            config.register(loggingFeature);
-        }
+        RequestLoggingFilter logFilter = new RequestLoggingFilter();
+        config.register(logFilter);
     }
 
     protected Map<String, Supplier<WebTarget>> createNamedTargets(HttpClientFactory clientFactory) {

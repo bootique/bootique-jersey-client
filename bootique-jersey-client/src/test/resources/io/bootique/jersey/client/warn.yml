@@ -18,7 +18,10 @@ log:
   loggers:
     io.bootique.jersey.client:
       level: warn
+      appenderRefs:
+      - client
   appenders:
     - type: file
+      name: client
       logFormat: '%c{20}: %m%n'
       file: target/logback/warn.log

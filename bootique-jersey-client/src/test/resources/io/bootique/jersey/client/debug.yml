@@ -14,11 +14,14 @@
 # limitations under the License.
 
 log:
-  level: warn
+  level: debug
   loggers:
     io.bootique.jersey.client:
       level: debug
+      appenderRefs:
+      - client
   appenders:
     - type: file
-      logFormat: '%c{20}: %m%n'
+      name: client
+      logFormat: '%c{20}: [%d{dd/MMM/yyyy:HH:mm:ss}] %m%n'
       file: target/logback/debug.log

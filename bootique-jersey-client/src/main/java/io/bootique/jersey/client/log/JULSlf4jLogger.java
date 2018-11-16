@@ -26,6 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+@Deprecated
 public class JULSlf4jLogger extends Logger {
 
 	private static final Consumer<LogRecord> DEFAULT_LOGGER = message -> {
