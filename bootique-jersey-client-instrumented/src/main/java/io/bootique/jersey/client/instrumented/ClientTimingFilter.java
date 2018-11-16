@@ -50,7 +50,6 @@ public class ClientTimingFilter extends RequestLoggingFilter {
 
 		LOGGER.info("Client request started");
 
-
 		// note that response filter method may not be called at all if the
 		// request results in connection exception, etc... Would be nice to
 		// trace failed requests too, but nothing in JAX RS allows us to do

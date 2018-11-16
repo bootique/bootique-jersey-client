@@ -26,6 +26,9 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+/**
+ * @deprecated since 1.0.RC1 not used
+ */
 @Deprecated
 public class JULSlf4jLogger extends Logger {
 

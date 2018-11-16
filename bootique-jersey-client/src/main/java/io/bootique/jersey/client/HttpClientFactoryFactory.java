@@ -181,7 +181,7 @@ public class HttpClientFactoryFactory {
         config.property(ClientProperties.CONNECT_TIMEOUT, connectTimeoutMs);
         config.property(ClientProperties.ASYNC_THREADPOOL_SIZE, asyncThreadPoolSize);
 
-        features.forEach(f -> config.register(f));
+        features.forEach(config::register);
 
         if (compression) {
             config.register(new EncodingFeature(GZipEncoder.class));
@@ -193,9 +193,7 @@ public class HttpClientFactoryFactory {
     }
 
     protected void configRequestLogging(ClientConfig config) {
-
-        RequestLoggingFilter logFilter = new RequestLoggingFilter();
-        config.register(logFilter);
+        config.register(new RequestLoggingFilter());
     }
 
     protected Map<String, Supplier<WebTarget>> createNamedTargets(HttpClientFactory clientFactory) {
