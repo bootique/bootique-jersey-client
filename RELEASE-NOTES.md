@@ -1,5 +1,6 @@
 ## 1.0.RC1
 
+* #24 Response time healthcheck
 * #31 Cleaning up APIs deprecated since <= 0.25
 * #32 Update Jackson to 2.9.5
 * #33 Metrics renaming to follow naming convention

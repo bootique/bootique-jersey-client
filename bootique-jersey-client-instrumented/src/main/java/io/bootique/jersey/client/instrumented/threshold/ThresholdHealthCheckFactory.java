@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 /**
- * @since 0.26
+ * @since 1.0.RC1
  */
 @BQConfig
 public class ThresholdHealthCheckFactory {
@@ -35,10 +35,17 @@ public class ThresholdHealthCheckFactory {
         return new JerseyHealthChecks(createHealthChecksMap(metricRegistry));
     }
 
-    private HealthCheck createTimeRequestsCheck(MetricRegistry registry) {
-        Supplier<Double> deferredGauge = valueFromGauge(registry, ClientTimingFilter.TIMER_NAME);
+    protected Map<String, HealthCheck> createHealthChecksMap(MetricRegistry registry) {
+        Map<String, HealthCheck> checks = new HashMap<>(3);
+        checks.put(THRESHOLD_REQUESTS_CHECK, createTimeRequestsCheck(registry));
+        return checks;
+    }
 
+    private HealthCheck createTimeRequestsCheck(MetricRegistry registry) {
         ValueRange<Double> range = getTimeRequestsThresholds();
+        Supplier<Double> deferredGauge = ()
+                -> registry.timer(ClientTimingFilter.TIMER_NAME).getOneMinuteRate();
+
         return new ValueRangeCheck<>(range, deferredGauge);
     }
 
@@ -56,16 +63,4 @@ public class ThresholdHealthCheckFactory {
         return ValueRange.builder(Double.class).min(0.0).warning(3.0).critical(15.0).build();
     }
 
-    protected Map<String, HealthCheck> createHealthChecksMap(MetricRegistry registry) {
-        Map<String, HealthCheck> checks = new HashMap<>(3);
-        checks.put(THRESHOLD_REQUESTS_CHECK, createTimeRequestsCheck(registry));
-        return checks;
-    }
-
-    private Supplier<Double> valueFromGauge(MetricRegistry registry, String name) {
-
-        // using deferred gauge resolving to allow health checks against the system with misconfigured metrics,
-        // or Jetty not yet up during health check creation
-        return () -> registry.timer(name).getOneMinuteRate();
-    }
 }
