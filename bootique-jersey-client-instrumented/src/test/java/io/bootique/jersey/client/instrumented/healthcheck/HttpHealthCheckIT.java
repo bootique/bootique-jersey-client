@@ -20,6 +20,7 @@
 package io.bootique.jersey.client.instrumented.healthcheck;
 
 import io.bootique.jersey.JerseyModule;
+import io.bootique.jersey.client.instrumented.JerseyClientInstrumentedModule;
 import io.bootique.jetty.JettyModule;
 import io.bootique.metrics.health.HealthCheckOutcome;
 import io.bootique.metrics.health.HealthCheckStatus;
@@ -53,7 +54,7 @@ public class HttpHealthCheckIT {
     public static void beforeClass() {
 
         SERVER_APP_FACTORY.app("--server")
-                .modules(JettyModule.class, JerseyModule.class)
+                .modules(JettyModule.class, JerseyClientInstrumentedModule.class, JerseyModule.class)
                 .module(b -> JerseyModule.extend(b).addResource(Resource.class))
                 .run();
     }
