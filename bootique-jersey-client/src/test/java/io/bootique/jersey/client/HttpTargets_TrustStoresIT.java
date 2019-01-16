@@ -75,6 +75,23 @@ public class HttpTargets_TrustStoresIT {
         Resource.assertResponse(r);
     }
 
+    @Test
+    public void testNamedTrustStore_DerivedTarget() {
+
+        HttpTargets targets =
+                clientFactory.app()
+                        .module(new JerseyClientModuleProvider())
+                        .module(new LogbackModuleProvider())
+                        .property("bq.jerseyclient.trustStores.ts1.location", CLIENT_TRUST_STORE)
+                        .property("bq.jerseyclient.targets.t.url", SERVICE_URL)
+                        .property("bq.jerseyclient.targets.t.trustStore", "ts1")
+                        .createRuntime()
+                        .getInstance(HttpTargets.class);
+
+        Response r = targets.newTarget("t").path("2").request().get();
+        Resource.assertResponse2(r);
+    }
+
     @Test(expected = ProvisionException.class)
     public void testNamedTrustStore_InvalidRef() {
 
@@ -96,10 +113,21 @@ public class HttpTargets_TrustStoresIT {
             assertEquals("got", response.readEntity(String.class));
         }
 
+        static void assertResponse2(Response response) {
+            assertEquals(200, response.getStatus());
+            assertEquals("got2", response.readEntity(String.class));
+        }
+
         @GET
         @Path("get")
         public String get() {
             return "got";
+        }
+
+        @GET
+        @Path("get/2")
+        public String get2() {
+            return "got2";
         }
     }
 }
