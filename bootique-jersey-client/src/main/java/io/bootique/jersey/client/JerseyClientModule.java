@@ -50,8 +50,8 @@ public class JerseyClientModule extends ConfigModule {
 
     @Provides
     @Singleton
-    HttpClientFactoryFactory provideClientFactoryFactory(ConfigurationFactory configurationFactory) {
-        return configurationFactory.config(HttpClientFactoryFactory.class, configPrefix);
+    HttpClientFactoryFactory provideClientFactoryFactory(ConfigurationFactory configFactory) {
+        return config(HttpClientFactoryFactory.class, configFactory);
     }
 
     @Provides
