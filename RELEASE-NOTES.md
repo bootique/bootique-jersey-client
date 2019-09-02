@@ -1,3 +1,9 @@
+## 1.1
+
+* #43 Java 10+: explicit activation and jaxb dependencies are required
+
+## 1.0
+
 ## 1.0.RC1
 
 * #24 Response time healthcheck

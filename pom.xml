@@ -121,6 +121,16 @@
                 <artifactId>bootique-logback</artifactId>
                 <version>${bootique.version}</version>
             </dependency>
+            <dependency><!-- Transitive dependency of jersey -->
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>${jaxb.version}</version>
+            </dependency>
+            <dependency><!-- Transitive dependency of jersey -->
+                <groupId>javax.activation</groupId>
+                <artifactId>activation</artifactId>
+                <version>${activation.version}</version>
+            </dependency>
 
             <!-- This modules imports lots of Jackson-related stuff, whose versions
                 conflict with Bootique config loader. Manually exclude things already imported
