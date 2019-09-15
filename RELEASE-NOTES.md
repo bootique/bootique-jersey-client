@@ -1,6 +1,7 @@
 ## 1.1
 
 * #43 Java 10+: explicit activation and jaxb dependencies are required
+* #44 "apiKeyHeader" and "apiKeyParameter" authenticators
 
 ## 1.0
 
