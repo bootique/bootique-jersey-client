@@ -27,7 +27,6 @@ import org.glassfish.jersey.message.GZipEncoder;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
-import java.net.URI;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -37,7 +36,7 @@ import java.util.function.Supplier;
 @BQConfig
 public class WebTargetFactory {
 
-    private URI url;
+    private String url;
     private String auth;
     private String trustStore;
 
@@ -50,7 +49,7 @@ public class WebTargetFactory {
 
 
     @BQConfigProperty
-    public void setUrl(URI url) {
+    public void setUrl(String url) {
         this.url = url;
     }
 
@@ -91,7 +90,7 @@ public class WebTargetFactory {
         // copy vars for the supplier (with minimal validation), so that they can not be overridden by the time
         // supplier is executed...
 
-        URI localUrl = Objects.requireNonNull(url, "'url' property is required");
+        String localUrl = Objects.requireNonNull(url, "'url' property is required");
         Boolean followRedirectsOverride = this.followRedirects;
         Integer readTimeoutMsOverride = this.readTimeoutMs;
         Integer connectTimeoutMsOverride = this.connectTimeoutMs;

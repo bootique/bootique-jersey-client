@@ -2,6 +2,7 @@
 
 * #43 Java 10+: explicit activation and jaxb dependencies are required
 * #44 "apiKeyHeader" and "apiKeyParameter" authenticators
+* #45 Allow parameterized templates in mapped target "url" 
 
 ## 1.0
 
