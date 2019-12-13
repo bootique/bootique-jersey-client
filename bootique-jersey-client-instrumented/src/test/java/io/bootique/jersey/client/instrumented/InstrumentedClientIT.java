@@ -21,7 +21,6 @@ package io.bootique.jersey.client.instrumented;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import com.google.inject.Module;
 import io.bootique.BQRuntime;
 import io.bootique.jersey.JerseyModule;
 import io.bootique.jersey.client.HttpClientFactory;
@@ -60,12 +59,9 @@ public class InstrumentedClientIT {
 
     @BeforeClass
     public static void beforeClass() {
-
-        Module jersey = binder -> JerseyModule.extend(binder).addResource(Resource.class);
-
         SERVER_APP_FACTORY.app("--server")
                 .modules(JettyModule.class, JerseyModule.class)
-                .module(jersey)
+                .module(binder -> JerseyModule.extend(binder).addResource(Resource.class))
                 .run();
     }
 

@@ -19,8 +19,8 @@
 
 package io.bootique.jersey.client;
 
-import com.google.inject.Binder;
-import com.google.inject.multibindings.Multibinder;
+import io.bootique.di.Binder;
+import io.bootique.di.SetBuilder;
 
 import javax.ws.rs.core.Feature;
 
@@ -30,7 +30,7 @@ import javax.ws.rs.core.Feature;
 public class JerseyClientModuleExtender {
 
     private Binder binder;
-    private Multibinder<Feature> features;
+    private SetBuilder<Feature> features;
 
     JerseyClientModuleExtender(Binder binder) {
         this.binder = binder;
@@ -43,19 +43,19 @@ public class JerseyClientModuleExtender {
 
 
     public JerseyClientModuleExtender addFeature(Feature feature) {
-        contributeFeatures().addBinding().toInstance(feature);
+        contributeFeatures().add(feature);
         return this;
     }
 
     public <T extends Feature> JerseyClientModuleExtender addFeature(Class<T> featureType) {
-        contributeFeatures().addBinding().to(featureType);
+        contributeFeatures().add(featureType);
         return this;
     }
 
-    protected Multibinder<Feature> contributeFeatures() {
+    protected SetBuilder<Feature> contributeFeatures() {
 
         if (features == null) {
-            features = Multibinder.newSetBinder(binder, Feature.class, JerseyClientFeatures.class);
+            features = binder.bindSet(Feature.class, JerseyClientFeatures.class);
         }
 
         return features;

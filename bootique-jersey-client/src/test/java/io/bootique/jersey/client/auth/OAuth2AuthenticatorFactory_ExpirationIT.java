@@ -19,7 +19,7 @@
 
 package io.bootique.jersey.client.auth;
 
-import com.google.inject.Injector;
+import io.bootique.di.Injector;
 import io.bootique.jersey.JerseyModule;
 import io.bootique.test.junit.BQTestFactory;
 import org.junit.BeforeClass;

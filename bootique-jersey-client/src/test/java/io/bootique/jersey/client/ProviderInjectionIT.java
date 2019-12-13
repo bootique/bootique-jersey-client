@@ -19,9 +19,8 @@
 
 package io.bootique.jersey.client;
 
-import com.google.inject.Inject;
-import com.google.inject.Module;
 import io.bootique.BQRuntime;
+import io.bootique.di.BQModule;
 import io.bootique.jersey.JerseyModule;
 import io.bootique.jetty.JettyModule;
 import io.bootique.test.junit.BQDaemonTestFactory;
@@ -34,6 +33,7 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -70,7 +70,7 @@ public class ProviderInjectionIT {
 
     @BeforeClass
     public static void startJetty() {
-        Module jersey = (binder) -> JerseyModule.extend(binder).addResource(Resource.class);
+        BQModule jersey = (binder) -> JerseyModule.extend(binder).addResource(Resource.class);
         Function<BQRuntime, Boolean> startupCheck = r -> r.getInstance(Server.class).isStarted();
 
         SERVER_APP = SERVER_APP_FACTORY.app("--server")
@@ -88,7 +88,7 @@ public class ProviderInjectionIT {
     @Before
     public void before() {
 
-        Module module = binder -> {
+        BQModule module = binder -> {
             JerseyClientModule.extend(binder).addFeature(TestResponseReaderFeature.class);
             binder.bind(InjectedService.class);
         };

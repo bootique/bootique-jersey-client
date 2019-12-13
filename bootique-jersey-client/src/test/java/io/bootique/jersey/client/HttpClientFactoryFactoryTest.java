@@ -27,11 +27,10 @@ import java.util.Collections;
 
 import javax.ws.rs.client.Client;
 
+import io.bootique.di.Injector;
 import org.glassfish.jersey.client.ClientProperties;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.google.inject.Injector;
 
 public class HttpClientFactoryFactoryTest {
 

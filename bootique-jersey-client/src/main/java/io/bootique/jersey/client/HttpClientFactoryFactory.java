@@ -19,19 +19,21 @@
 
 package io.bootique.jersey.client;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
+import io.bootique.di.Injector;
 import io.bootique.jersey.client.auth.AuthenticatorFactory;
 import io.bootique.jersey.client.log.RequestLoggingFilter;
 import org.glassfish.hk2.api.InjectionResolver;
+import org.glassfish.hk2.api.JustInTimeInjectionResolver;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.filter.EncodingFeature;
 import org.glassfish.jersey.internal.inject.AbstractBinder;
 import org.glassfish.jersey.message.GZipEncoder;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Feature;
@@ -139,11 +141,11 @@ public class HttpClientFactoryFactory {
         config.register(new AbstractBinder() {
             @Override
             protected void configure() {
-                ClientGuiceInjectInjector guiceInjector = new ClientGuiceInjectInjector(injector);
-
-                bind(guiceInjector)
-                        .to(new GenericType<InjectionResolver<Inject>>(){})
-                        .in(javax.inject.Singleton.class);
+                bind(injector).to(Injector.class)
+                        .in(Singleton.class);
+                bind(ClientBqInjectorBridge.class)
+                        .to(JustInTimeInjectionResolver.class)
+                        .in(Singleton.class);
             }
         });
 

@@ -19,7 +19,7 @@
 
 package io.bootique.jersey.client;
 
-import com.google.inject.ProvisionException;
+import io.bootique.di.DIRuntimeException;
 import io.bootique.jersey.JerseyModule;
 import io.bootique.jetty.JettyModule;
 import io.bootique.logback.LogbackModuleProvider;
@@ -92,7 +92,7 @@ public class HttpTargets_TrustStoresIT {
         Resource.assertResponse2(r);
     }
 
-    @Test(expected = ProvisionException.class)
+    @Test(expected = DIRuntimeException.class)
     public void testNamedTrustStore_InvalidRef() {
 
         clientFactory.app()

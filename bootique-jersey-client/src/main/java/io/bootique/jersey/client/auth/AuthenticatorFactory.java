@@ -20,9 +20,9 @@
 package io.bootique.jersey.client.auth;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.google.inject.Injector;
 import io.bootique.annotation.BQConfig;
 import io.bootique.config.PolymorphicConfiguration;
+import io.bootique.di.Injector;
 
 import javax.ws.rs.client.ClientRequestFilter;
 
@@ -35,7 +35,7 @@ public interface AuthenticatorFactory extends PolymorphicConfiguration {
 
     /**
      * @param injector DI injector that can be used to lookup extra services required by the factory.
-     * @return
+     * @return auth request filter
      * @since 0.24
      */
     ClientRequestFilter createAuthFilter(Injector injector);

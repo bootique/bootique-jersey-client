@@ -19,7 +19,7 @@
 
 package io.bootique.jersey.client;
 
-import com.google.inject.Injector;
+import io.bootique.di.Injector;
 import io.bootique.jersey.JerseyModule;
 import io.bootique.jersey.client.auth.AuthenticatorFactory;
 import io.bootique.jersey.client.auth.BasicAuthenticatorFactory;

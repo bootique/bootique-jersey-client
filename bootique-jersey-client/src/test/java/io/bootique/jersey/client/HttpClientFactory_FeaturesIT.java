@@ -19,7 +19,7 @@
 
 package io.bootique.jersey.client;
 
-import com.google.inject.Module;
+import io.bootique.di.BQModule;
 import io.bootique.jersey.JerseyModule;
 import io.bootique.jetty.JettyModule;
 import io.bootique.test.junit.BQTestFactory;
@@ -60,7 +60,7 @@ public class HttpClientFactory_FeaturesIT {
     @Before
     public void before() {
 
-        Module features = binder -> JerseyClientModule
+        BQModule features = binder -> JerseyClientModule
                 .extend(binder)
                 .addFeature(Feature1.class)
                 .addFeature(Feature2.class);

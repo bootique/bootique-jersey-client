@@ -19,13 +19,13 @@
 
 package io.bootique.jersey.client;
 
-import com.google.inject.Binder;
-import com.google.inject.Injector;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
 import io.bootique.ConfigModule;
 import io.bootique.config.ConfigurationFactory;
+import io.bootique.di.Binder;
+import io.bootique.di.Injector;
+import io.bootique.di.Provides;
 
+import javax.inject.Singleton;
 import javax.ws.rs.core.Feature;
 import java.util.Set;
 

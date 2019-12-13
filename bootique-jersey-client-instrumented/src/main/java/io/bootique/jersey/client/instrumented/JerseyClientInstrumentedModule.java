@@ -19,12 +19,13 @@
 
 package io.bootique.jersey.client.instrumented;
 
+import javax.inject.Singleton;
+
 import com.codahale.metrics.MetricRegistry;
-import com.google.inject.Binder;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
 import io.bootique.ConfigModule;
 import io.bootique.config.ConfigurationFactory;
+import io.bootique.di.Binder;
+import io.bootique.di.Provides;
 import io.bootique.jersey.client.JerseyClientModule;
 import io.bootique.jersey.client.instrumented.threshold.JerseyHealthChecks;
 import io.bootique.jersey.client.instrumented.threshold.ThresholdHealthCheckFactory;

@@ -19,8 +19,8 @@
 
 package io.bootique.jersey.client.instrumented;
 
-import com.google.inject.Module;
 import io.bootique.BQModuleProvider;
+import io.bootique.di.BQModule;
 import io.bootique.jersey.client.JerseyClientModule;
 import io.bootique.jersey.client.JerseyClientModuleProvider;
 import io.bootique.metrics.MetricsModuleProvider;
@@ -34,12 +34,12 @@ import static java.util.Arrays.asList;
 public class JerseyClientInstrumentedModuleProvider implements BQModuleProvider {
 
     @Override
-    public Module module() {
+    public BQModule module() {
         return new JerseyClientInstrumentedModule();
     }
 
     @Override
-    public Collection<Class<? extends Module>> overrides() {
+    public Collection<Class<? extends BQModule>> overrides() {
         return Collections.singleton(JerseyClientModule.class);
     }
 

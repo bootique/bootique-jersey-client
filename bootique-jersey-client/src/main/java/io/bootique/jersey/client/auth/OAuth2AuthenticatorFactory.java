@@ -20,9 +20,9 @@
 package io.bootique.jersey.client.auth;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.google.inject.Injector;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
+import io.bootique.di.Injector;
 import io.bootique.jersey.client.HttpClientBuilder;
 import io.bootique.jersey.client.HttpClientFactory;
 import org.glassfish.jersey.jackson.JacksonFeature;

@@ -19,9 +19,9 @@
 
 package io.bootique.jersey.client;
 
-import com.google.inject.Injector;
-import com.google.inject.Module;
 import io.bootique.BQCoreModule;
+import io.bootique.di.Injector;
+import io.bootique.di.BQModule;
 import io.bootique.jersey.JerseyModule;
 import io.bootique.jetty.JettyModule;
 import io.bootique.logback.LogbackModule;
@@ -60,7 +60,7 @@ public class HttpClientFactoryFactory_LoggingIT {
 
     private void startApp(String config) {
 
-        Module extensions = b -> {
+        BQModule extensions = b -> {
             JerseyModule.extend(b).addResource(Resource.class);
 
             // TODO: this test is seriously dirty.. we don't start the client from Bootique,
