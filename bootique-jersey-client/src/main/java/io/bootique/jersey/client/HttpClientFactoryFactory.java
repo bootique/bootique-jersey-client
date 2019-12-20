@@ -21,6 +21,7 @@ package io.bootique.jersey.client;
 
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
+import io.bootique.di.BQInject;
 import io.bootique.di.Injector;
 import io.bootique.jersey.client.auth.AuthenticatorFactory;
 import io.bootique.jersey.client.log.RequestLoggingFilter;
@@ -145,6 +146,9 @@ public class HttpClientFactoryFactory {
                         .in(Singleton.class);
                 bind(ClientBqInjectorBridge.class)
                         .to(JustInTimeInjectionResolver.class)
+                        .in(Singleton.class);
+                bind(ClientBqInjectInjector.class)
+                        .to(new GenericType<InjectionResolver<BQInject>>(){})
                         .in(Singleton.class);
             }
         });
