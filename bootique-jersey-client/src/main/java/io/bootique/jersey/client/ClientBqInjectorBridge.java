@@ -48,6 +48,8 @@ public class ClientBqInjectorBridge implements JustInTimeInjectionResolver {
 	 * from Bootique DI injector.
 	 */
 
+	private static final String GLASSFISH_PACKAGE = "org.glassfish";
+
 	private Injector injector;
 	private ServiceLocator locator;
 
@@ -74,7 +76,7 @@ public class ClientBqInjectorBridge implements JustInTimeInjectionResolver {
 				? Key.get(typeLiteral)
 				: Key.get(typeLiteral, bindingAnnotation);
 
-		if(!injector.hasProvider(key)) {
+		if(!injector.hasProvider(key) && !allowDynamicInjectionForKey(key)) {
 			return false;
 		}
 
@@ -87,6 +89,11 @@ public class ClientBqInjectorBridge implements JustInTimeInjectionResolver {
 		));
 		// notify that we have added a new descriptor
 		return true;
+	}
+
+	protected boolean allowDynamicInjectionForKey(Key<?> key) {
+		String packageName = key.getType().getRawType().getPackage().getName();
+		return !packageName.startsWith(GLASSFISH_PACKAGE);
 	}
 
 	/**
