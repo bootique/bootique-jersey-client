@@ -20,6 +20,9 @@
 [![Build Status](https://travis-ci.org/bootique/bootique-jersey-client.svg)](https://travis-ci.org/bootique/bootique-jersey-client)
 [![Maven Central](https://img.shields.io/maven-central/v/io.bootique.jersey.client/bootique-jersey-client.svg?colorB=brightgreen)](https://search.maven.org/artifact/io.bootique.jersey.client/bootique-jersey-client/)
 
+
+**WARNING: Since 2.0 Jersey client integration is moved to "bootique-jersey" project per [https://github.com/bootique/bootique-jersey/issues/48]. This project is only for 1.x support.**
+
 # bootique-jersey-client
 
 Integrates JAX-RS-based HTTP client in [Bootique](http://bootique.io) with support for various types of 
