@@ -21,7 +21,7 @@
 [![Maven Central](https://img.shields.io/maven-central/v/io.bootique.jersey.client/bootique-jersey-client.svg?colorB=brightgreen)](https://search.maven.org/artifact/io.bootique.jersey.client/bootique-jersey-client/)
 
 
-**WARNING: Since 2.0 Jersey client integration is moved to "bootique-jersey" project per [https://github.com/bootique/bootique-jersey/issues/48]. This project is only for 1.x support.**
+**WARNING: Since 2.0 Jersey client integration is moved to "bootique-jersey" project per [this issue](https://github.com/bootique/bootique-jersey/issues/48). This project is only for 1.x support.**
 
 # bootique-jersey-client
 
