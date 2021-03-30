@@ -17,7 +17,7 @@
   under the License.
   -->
 
-[![Build Status](https://travis-ci.org/bootique/bootique-jersey-client.svg)](https://travis-ci.org/bootique/bootique-jersey-client)
+[![build test deploy 1.x](https://github.com/bootique/bootique-jersey-client/actions/workflows/maven-1x.yml/badge.svg)](https://github.com/bootique/bootique-jersey-client/actions/workflows/maven-1x.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/io.bootique.jersey.client/bootique-jersey-client.svg?colorB=brightgreen)](https://search.maven.org/artifact/io.bootique.jersey.client/bootique-jersey-client/)
 
 # bootique-jersey-client
